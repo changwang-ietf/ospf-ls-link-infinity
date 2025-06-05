@@ -1,0 +1,504 @@
+
+
+
+
+LSR Working Group                                                L. Gong
+Internet-Draft                                                  W. Cheng
+Updates: 6987, 8770 (if approved)                           China Mobile
+Intended status: Standards Track                                  C. Lin
+Expires: 12 June 2025                               New H3C Technologies
+                                                               A. Lindem
+                                                     LabN Consulting LLC
+                                                                 R. Chen
+                                                         ZTE Corporation
+                                                         9 December 2024
+
+
+                 Advertising Unreachable Links in OSPF
+                draft-ietf-lsr-ospf-ls-link-infinity-02
+
+Abstract
+
+   In certain scenarios, it is necessary to advertise unreachable links
+   in OSPF, which should be explicitly excluded from the related SPF
+   calculation.  This document specifies using LSLinkInfinity(0xffff) to
+   advertise an OSPF link as unreachable.
+
+   Stub Router Advertisement (RFC 6987) defines MaxLinkMetric (0xffff)
+   to indicate a router-LSA link should not be used for transit traffic.
+   This document updates RFC 6987 and RFC 8770.  When an OSPFv2 router
+   supports the Unreachable Link support capability defined in this
+   document, the OSPFv2 stub router MaxLinkMetric(0xffff) MUST be
+   updated to MaxReachableLinkMetric(0xfffe).
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on 12 June 2025.
+
+
+
+
+
+
+Gong, et al.              Expires 12 June 2025                  [Page 1]
+
+Internet-Draft    Advertising Unreachable Links in OSPF    December 2024
+
+
+Copyright Notice
+
+   Copyright (c) 2024 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents (https://trustee.ietf.org/
+   license-info) in effect on the date of publication of this document.
+   Please review these documents carefully, as they describe your rights
+   and restrictions with respect to this document.  Code Components
+   extracted from this document must include Revised BSD License text as
+   described in Section 4.e of the Trust Legal Provisions and are
+   provided without warranty as described in the Revised BSD License.
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
+     1.1.  Requirements Language . . . . . . . . . . . . . . . . . .   3
+   2.  Use Cases . . . . . . . . . . . . . . . . . . . . . . . . . .   3
+     2.1.  Case 1: Traffic Engineering . . . . . . . . . . . . . . .   3
+     2.2.  Case 2: Flexible Algorithm  . . . . . . . . . . . . . . .   3
+   3.  Solution based on LSLinkInfinity  . . . . . . . . . . . . . .   4
+   4.  Backward Compatibility  . . . . . . . . . . . . . . . . . . .   5
+     4.1.  LSLinkInfinity Backward Compatibility . . . . . . . . . .   5
+     4.2.  Stub Router Advertisement Backward Compatibility  . . . .   6
+   5.  Management Considerations . . . . . . . . . . . . . . . . . .   6
+   6.  Security Considerations . . . . . . . . . . . . . . . . . . .   7
+   7.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   7
+   8.  Contributors  . . . . . . . . . . . . . . . . . . . . . . . .   7
+   9.  References  . . . . . . . . . . . . . . . . . . . . . . . . .   7
+     9.1.  Normative References  . . . . . . . . . . . . . . . . . .   7
+     9.2.  Informative References  . . . . . . . . . . . . . . . . .   8
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   8
+
+1.  Introduction
+
+   In specific scenarios, there is a requirement to advertise
+   unreachable links in OSPF, which MUST NOT be considered during the
+   standard SPF computation.  For example, a link may be available for
+   Traffic Engineering (TE) purposes but not suitable for hop-by-hop
+   routing.  Another example is an OSPF link with dedicated resources
+   for a network slice included in a Flexible Algorithm (Flex-
+   Algorithm) but excluded from the default topology.
+
+   This document proposes a mechanism to advertise infinity links in
+   OSPF.
+
+
+
+
+
+Gong, et al.              Expires 12 June 2025                  [Page 2]
+
+Internet-Draft    Advertising Unreachable Links in OSPF    December 2024
+
+
+1.1.  Requirements Language
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in BCP
+   14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
+
+2.  Use Cases
+
+2.1.  Case 1: Traffic Engineering
+
+   A network topology is shown in Figure 1.  There is a link available
+   for Traffic Engineering between Node A and E.  If this link is used
+   for SPF calculations, best-effort traffic will be routed on the link.
+
+                                  TE Link
+                                 ---------
+                                /         \
+                               /           \
+                              A------C------E
+                              |      |      |
+                              |      |      |
+                              |      |      |
+                              B------D------F
+
+                        Figure 1: Network Topology
+
+2.2.  Case 2: Flexible Algorithm
+
+   A network topology is shown in Figure 2.  The links between nodes A,
+   B, C, and D are to be used exclusively for a flex-algorithm used for
+   a specific network slice.  These links have an Extended
+   Administrative Group (EAG) [RFC7308] attribute specifying the "red"
+   color.
+
+                    ******
+                   A------C------E
+                   |*     |*     |
+                   |*     |*     |        ******: "red" link
+                   |*     |*     |
+                   B------D------F
+                    ******
+
+                        Figure 2: Network Topology
+
+
+
+
+
+
+Gong, et al.              Expires 12 June 2025                  [Page 3]
+
+Internet-Draft    Advertising Unreachable Links in OSPF    December 2024
+
+
+   Flex-Algorithm 128 is enabled on Nodes A, B, C, and D, with an EAG
+   rule including "red" and the Metric-Type is designated to be a type
+   other than the IGP metric.  Flex-Algorithm allows OSPF to compute the
+   paths along the constrained topology.  The topology used by Flex-
+   Algorithm 128 is shown in Figure 3.
+
+                               A******C
+                               *      *
+                               *      *
+                               *      *
+                               B******D
+
+                 Figure 3: Topology of Flex-Algorithm 128
+
+   Flex-Algorithm 128 is used for routing particular flows, such as
+   those for a network slice.  The "red" links used by Flex-Algorithm
+   128 are sub-interfaces with dedicated queues for guaranteed
+   bandwidth.  Sub-interfaces in other network slices and default
+   topology are omitted from the example figure for clarity.  So, it is
+   expected that only the particular flows are routed on these links
+   using Flex-Algorithm 128.  However, these links are also contained in
+   the default topology computed by the normal SPF calculation, and
+   these links may also be used for best-effort traffic.  Therefore, it
+   is a problem that the dedicated links for Flex-Algorithm are still
+   reachable in base SPF calculation.
+
+   If the IGP metrics for all the "red" links are advertised as
+   unreachable, the base topology will be as shown in Figure 4,
+   excluding all the "red" links.  This allows only the network slice
+   traffic to be routed on the "red" links by Flex-Algorithm 128.
+
+                            A------C------E
+                            |      |      |
+                            |      |      |
+                            |      |      |
+                            B------D------F
+
+          Figure 4: Base SPF Topology Excluding Unreachable Links
+
+3.  Solution based on LSLinkInfinity
+
+   This document specifies that if the IGP metric of a link is
+   advertised as LSLinkInfinity (0xffff), it MUST NOT be considered
+   during the related SPF computation.  This applies to both the Flex-
+   Algorithm SPF and the base SPF as long as LSLinkInfinity is specified
+   for the IGP metric.
+
+
+
+
+
+Gong, et al.              Expires 12 June 2025                  [Page 4]
+
+Internet-Draft    Advertising Unreachable Links in OSPF    December 2024
+
+
+4.  Backward Compatibility
+
+4.1.  LSLinkInfinity Backward Compatibility
+
+   Prior to this specification, OSPF treated links advertised as
+   LSLinkInfinity as reachable [RFC2328].  Hence, partial deployment of
+   this specification may result in routing loops due to inconsistent
+   interpretation of LSLinkInfinity.  For example in the network shown
+   in Figure 5, link D-F is advertised with
+   LSLinkInfinity(65535/0xffff).  Router A supports LSLinkInfinity as
+   unreachable, but router B does not.  Router A considers link D-F as
+   reachable, and the shortest path to F is A->B->D->F.  Router B
+   considers link D-F as unreachable, and the shortest path to F is
+   B->A->C->E->F.  As a result, A forwards the packets to B, but B
+   returns them to A, which results in a routing loop.
+
+          40000  40000      Traffic: A->F
+        A------C------E       A considers link D-F as reachable
+        |             |         A's shortest path: A->B->D->F
+       5|             |5      B considers link D-F as unreachable
+        |             |         B's shortest path: B->A->C->E->F
+        B------D------F
+            5    65535
+
+    Figure 5: Inconsistent LSLinkInfinity Interpretation Causing Loops
+
+   To provide backward compatibility, this document defines that routers
+   supporting LSLinkInfinity for unreachable links MUST advertise a
+   Router Information (RI) LSA advertisement of a Router Informational
+   Capabilities TLV [RFC7770] including the following Router
+   Informational Capability Bit:
+
+                    +=====+==========================+
+                    | Bit | Capabilities             |
+                    +=====+==========================+
+                    | TBA | Unreachable Link support |
+                    +-----+--------------------------+
+
+                                 Table 1
+
+   OSPF Routers MUST NOT treat links with an advertised metric of
+   LSLinkInfinity as unreachable unless all routers in the OSPF area
+   have advertised this capability.  If all OSPF Routers in the area
+   have advertised this capability, then links with an advertised metric
+   of LSLinkInfinity MUST be treated as unreachable.  Upon detection of
+   a change in the number of routers in the area not supporting the
+   Unreachable Link support capability changes to 0 or from 0 to greater
+   than 0, all OSPF routers in the area MUST recalculate their routes.
+
+
+
+Gong, et al.              Expires 12 June 2025                  [Page 5]
+
+Internet-Draft    Advertising Unreachable Links in OSPF    December 2024
+
+
+   An IGP metic with LSLinkInfinity indicating a link is unreachable is
+   applicable to the following TLVs/LSAs:
+
+   *  The Router-LSA [RFC2328] and [RFC5340]
+
+   *  The OSPFv2 Extended Link TLV of OSPFv2 Extended Link Opaque LSA
+      [RFC7684]
+
+   *  The Router-Link TLV of OSPFv3 E-Router-LSA [RFC8362]
+
+4.2.  Stub Router Advertisement Backward Compatibility
+
+   Stub Router Advertisement [RFC6987] defines MaxLinkMetric (0xffff) to
+   indicate a router-LSA link should not be used for transit traffic.
+
+   This document updates [RFC6987] and [RFC8770].  When an OSPFv2 router
+   supports the Unreachable Link support capability defined in this
+   document, the OSPFv2 stub router MaxLinkMetric(0xffff) MUST be
+   updated to MaxReachableLinkMetric(0xfffe).
+
+   When an OSPFv2 router supports [RFC6987] and the Unreachable Link
+   support capability defined in this document, it MUST also support
+   [RFC8770].  When announcing itself as a stub router, it MUST set the
+   H-bit in the router-LSA and advertise all its non-stub links with a
+   link cost of MaxReachableLinkMetric (0xfffe).  Since MaxLinkMetric
+   will not be used to indicate a link is unreachable unless all OSPFv2
+   routers in the area support this specification as specified in
+   section 3, all routers in the area will also support the H-bit and
+   the usage of MaxReachableLinkMetric to indicate an OSPF stub router
+   link should not be used for transit traffic.
+
+   An OSPFv3 router can simply use the R-bit [RFC5340] for stub router
+   advertisement.
+
+5.  Management Considerations
+
+   Support of the Unreachable Link support capability SHOULD be
+   configurable.
+
+   In some networks, the operator may still want links with maximum
+   metric(0xffff) to be treated as reachable.  For example, when auto-
+   costing of links is used and there is a mix of low-speed and high-
+   speed links.  In such cases, the updated routers can disable the
+   Unreachable Link support capability and still treat links with
+   maximum metric as reachable.
+
+
+
+
+
+
+Gong, et al.              Expires 12 June 2025                  [Page 6]
+
+Internet-Draft    Advertising Unreachable Links in OSPF    December 2024
+
+
+   It is also RECOMMENDED that implementations supporting this document
+   and auto-costing limit the maximum computed cost to
+   MaxReachableLinkMetric (0xfffe).
+
+6.  Security Considerations
+
+   The document does not introduce any new security issues for the OSPF
+   protocol.  The security considerations for [RFC2328],[RFC5340],
+   [RFC6987], and [RFC7770] are applicable to protocol extension.
+
+7.  IANA Considerations
+
+   This document defines a new bit in the registry "OSPF Router
+   Functional Capability Bits":
+
+         +============+==========================+===============+
+         | Bit Number | Capability Name          | Reference     |
+         +============+==========================+===============+
+         | 0(TBD)     | Unreachable Link support | This document |
+         +------------+--------------------------+---------------+
+
+                                  Table 2
+
+8.  Contributors
+
+   The following individuals have contributed to this document:
+
+      Mengxiao Chen
+      New H3C Technologies
+      China
+      Email: chen.mengxiao@h3c.com
+
+      Yanrong Liang
+      Ruijie Networks Co., Ltd.
+      China
+      Email: liangyanrong@ruijie.com.cn
+
+9.  References
+
+9.1.  Normative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/info/rfc2119>.
+
+
+
+
+
+
+Gong, et al.              Expires 12 June 2025                  [Page 7]
+
+Internet-Draft    Advertising Unreachable Links in OSPF    December 2024
+
+
+   [RFC2328]  Moy, J., "OSPF Version 2", STD 54, RFC 2328,
+              DOI 10.17487/RFC2328, April 1998,
+              <https://www.rfc-editor.org/info/rfc2328>.
+
+   [RFC7684]  Psenak, P., Gredler, H., Shakir, R., Henderickx, W.,
+              Tantsura, J., and A. Lindem, "OSPFv2 Prefix/Link Attribute
+              Advertisement", RFC 7684, DOI 10.17487/RFC7684, November
+              2015, <https://www.rfc-editor.org/info/rfc7684>.
+
+   [RFC7770]  Lindem, A., Ed., Shen, N., Vasseur, JP., Aggarwal, R., and
+              S. Shaffer, "Extensions to OSPF for Advertising Optional
+              Router Capabilities", RFC 7770, DOI 10.17487/RFC7770,
+              February 2016, <https://www.rfc-editor.org/info/rfc7770>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://www.rfc-editor.org/info/rfc8174>.
+
+   [RFC8362]  Lindem, A., Roy, A., Goethals, D., Reddy Vallem, V., and
+              F. Baker, "OSPFv3 Link State Advertisement (LSA)
+              Extensibility", RFC 8362, DOI 10.17487/RFC8362, April
+              2018, <https://www.rfc-editor.org/info/rfc8362>.
+
+9.2.  Informative References
+
+   [RFC5340]  Coltun, R., Ferguson, D., Moy, J., and A. Lindem, "OSPF
+              for IPv6", RFC 5340, DOI 10.17487/RFC5340, July 2008,
+              <https://www.rfc-editor.org/info/rfc5340>.
+
+   [RFC6987]  Retana, A., Nguyen, L., Zinin, A., White, R., and D.
+              McPherson, "OSPF Stub Router Advertisement", RFC 6987,
+              DOI 10.17487/RFC6987, September 2013,
+              <https://www.rfc-editor.org/info/rfc6987>.
+
+   [RFC7308]  Osborne, E., "Extended Administrative Groups in MPLS
+              Traffic Engineering (MPLS-TE)", RFC 7308,
+              DOI 10.17487/RFC7308, July 2014,
+              <https://www.rfc-editor.org/info/rfc7308>.
+
+   [RFC8770]  Patel, K., Pillay-Esnault, P., Bhardwaj, M., and S.
+              Bayraktar, "Host Router Support for OSPFv2", RFC 8770,
+              DOI 10.17487/RFC8770, April 2020,
+              <https://www.rfc-editor.org/info/rfc8770>.
+
+Authors' Addresses
+
+
+
+
+
+
+Gong, et al.              Expires 12 June 2025                  [Page 8]
+
+Internet-Draft    Advertising Unreachable Links in OSPF    December 2024
+
+
+   Liyan Gong
+   China Mobile
+   China
+   Email: gongliyan@chinamobile.com
+
+
+   Weiqiang Cheng
+   China Mobile
+   China
+   Email: chengweiqiang@chinamobile.com
+
+
+   Changwang Lin
+   New H3C Technologies
+   China
+   Email: linchangwang.04414@h3c.com
+
+
+   Acee Lindem
+   LabN Consulting LLC
+   United States of America
+   Email: acee.ietf@gmail.com
+
+
+   Ran Chen
+   ZTE Corporation
+   China
+   Email: chen.ran@zte.com.cn
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Gong, et al.              Expires 12 June 2025                  [Page 9]
