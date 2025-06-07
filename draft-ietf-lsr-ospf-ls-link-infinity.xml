@@ -1,8 +1,12 @@
-<?xml version="1.0" encoding="US-ASCII"?>
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE rfc [
+  <!ENTITY nbsp    "&#160;">
+  <!ENTITY zwsp   "&#8203;">
+  <!ENTITY nbhy   "&#8209;">
+  <!ENTITY wj     "&#8288;">
+]>
 <!-- This template is for creating an Internet Draft using xml2rfc,
     which is available here: http://xml.resource.org. -->
-<!DOCTYPE rfc []>
-
 <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
 <!-- used by XSLT processors -->
 <!-- For a complete list and description of processing instructions (PIs),
@@ -29,8 +33,10 @@
 <?rfc subcompact="no" ?>
 <!-- keep one blank line between list items -->
 <!-- end of list of popular I-D processing instructions -->
-<rfc category="std" docName="draft-ietf-lsr-ospf-ls-link-infinity-03"
-ipr="trust200902" consensus="true" submissionType="IETF" updates="6987, 8770">
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude" category="std" docName="draft-ietf-lsr-ospf-ls-link-infinity-03"
+     ipr="trust200902" consensus="true" submissionType="IETF" updates="6987, 8770" tocInclude="true"
+     tocDepth="4" symRefs="true" sortRefs="true" version="3">
+  <!-- xml2rfc v2v3 conversion 3.28.1 -->
   <!-- category values: std, bcp, info, exp, and historic
     ipr values: full3667, noModification3667, noDerivatives3667
     you can add the attributes updates="NNNN" and obsoletes="NNNN"
@@ -39,97 +45,72 @@ ipr="trust200902" consensus="true" submissionType="IETF" updates="6987, 8770">
   <!-- ***** FRONT MATTER ***** -->
 
   <front>
-
     <title abbrev="Advertising Unreachable Links in OSPF">Advertising Unreachable Links in OSPF</title>
-
+    <seriesInfo name="Internet-Draft" value="draft-ietf-lsr-ospf-ls-link-infinity-03"/>
     <!-- add 'role="editor"' below for the editors if appropriate -->
 
     <!-- Another author who claims to be an editor -->
 
-    <author fullname="Liyan Gong" initials="L."
-            surname="Gong">
+    <author fullname="Liyan Gong" initials="L." surname="Gong">
       <organization>China Mobile</organization>
-
       <address>
         <postal>
           <country>China</country>
         </postal>
-
         <email>gongliyan@chinamobile.com</email>
-
         <!-- uri and facsimile elements may also be added -->
       </address>
     </author>
-    <author fullname="Weiqiang Cheng" initials="W."
-            surname="Cheng">
+    <author fullname="Weiqiang Cheng" initials="W." surname="Cheng">
       <organization>China Mobile</organization>
-
       <address>
         <postal>
           <country>China</country>
         </postal>
-
         <email>chengweiqiang@chinamobile.com</email>
-
         <!-- uri and facsimile elements may also be added -->
       </address>
     </author>
-    <author fullname="Changwang Lin" initials="C."
-            surname="Lin">
+    <author fullname="Changwang Lin" initials="C." surname="Lin">
       <organization>New H3C Technologies</organization>
-
       <address>
         <postal>
           <country>China</country>
         </postal>
-
         <email>linchangwang.04414@h3c.com</email>
-
         <!-- uri and facsimile elements may also be added -->
       </address>
     </author>
-    <author fullname="Acee Lindem" initials="A."
-            surname="Lindem">
+    <author fullname="Acee Lindem" initials="A." surname="Lindem">
       <organization>Arrcus, Inc.</organization>
-
       <address>
         <postal>
           <country>United States of America</country>
         </postal>
-
         <email>acee.ietf@gmail.com</email>
-
         <!-- uri and facsimile elements may also be added -->
       </address>
     </author>
-    <author fullname="Ran Chen" initials="R."
-            surname="Chen">
+    <author fullname="Ran Chen" initials="R." surname="Chen">
       <organization>ZTE Corporation</organization>
-
       <address>
         <postal>
           <country>China</country>
         </postal>
-
         <email>chen.ran@zte.com.cn</email>
-
         <!-- uri and facsimile elements may also be added -->
       </address>
     </author>
-    <date year="2025" />
-
+    <date year="2025"/>
     <!-- Meta-data Declarations -->
 
     <area>General</area>
-
     <workgroup>LSR Working Group</workgroup>
-
     <keyword>LSR Working Group</keyword>
     <keyword>OSPF</keyword>
     <keyword>ls</keyword>
-
-<abstract>
-<t>
+    <abstract>
+      <t>
 	In certain scenarios, it is necessary to advertise unreachable links
   in OSPF, which should be explicitly excluded from the related SPF
   calculation. This document specifies using LSLinkInfinity(0xffff) to
@@ -144,14 +125,12 @@ ipr="trust200902" consensus="true" submissionType="IETF" updates="6987, 8770">
   MaxLinkMetric(0xffff) MUST be updated to 
   MaxReachableLinkMetric(0xfffe).
 </t>
-</abstract>
-
+    </abstract>
   </front>
-
   <middle>
-
-<section anchor="Introduction" title="Introduction">
-  <t>
+    <section anchor="Introduction">
+      <name>Introduction</name>
+      <t>
     In specific scenarios, there is a requirement to advertise
     unreachable links in OSPF, which MUST NOT be considered during the
     standard SPF computation. For example, a link may be available for
@@ -159,33 +138,33 @@ ipr="trust200902" consensus="true" submissionType="IETF" updates="6987, 8770">
     routing. Another example is an OSPF link with dedicated resources
     for a network slice included in a Flexible Algorithm (Flex-
     Algorithm) but excluded from the default topology.
-  </t>
-  <t>
+      </t>
+      <t>
     This document proposes a mechanism to advertise infinity links in
     OSPF.
-  </t>
-  <section anchor="Requirements Language" title="Requirements Language">
-    <t>
+      </t>
+      <section anchor="Requirements_Language">
+        <name>Requirements Language</name>
+        <t>
       The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
       NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED",
       "MAY", and "OPTIONAL" in this document are to be interpreted as
-      described in BCP 14 <xref target="RFC2119"/> <xref
-      target="RFC8174"/> when, and only when, they appear in all
+      described in BCP 14 <xref target="RFC2119"/> <xref target="RFC8174"/> when, and only when, they appear in all
       capitals, as shown here.
-    </t>
-  </section>
-</section>
-
-<section anchor="Use Cases" title="Use Cases">
-  <section anchor="Case 1" title="Case 1: Traffic Engineering">
-    <t>
+        </t>
+      </section>
+    </section>
+    <section anchor="Use_Cases">
+      <name>Use Cases</name>
+      <section anchor="Case_1">
+        <name>Case 1: Traffic Engineering</name>
+        <t>
        A network topology is shown in Figure 1. There is a link available
        for Traffic Engineering between Node A and E. If this link is used
        for SPF calculations, best-effort traffic will be routed on the
        link.
-    </t>
-    <t><figure>
-      <artwork align="center" name="Network Topology"><![CDATA[
+        </t>
+        <artwork align="center" name="Network Topology"><![CDATA[
           TE Link
          ---------
         /         \
@@ -197,18 +176,17 @@ ipr="trust200902" consensus="true" submissionType="IETF" updates="6987, 8770">
       B------D------F
 
 Figure 1: Network Topology]]></artwork>
-    </figure></t>
-  </section>
-  <section anchor="Case 2" title="Case 2: Flexible Algorithm">
-    <t>
+      </section>
+      <section anchor="Case_2">
+        <name>Case 2: Flexible Algorithm</name>
+        <t>
        A network topology is shown in Figure 2. The links between nodes A,
        B, C, and D are to be used exclusively for a flex-algorithm used for
        a specific network slice. These links have an Extended
        Administrative Group (EAG) <xref target="RFC7308"/> attribute specifying the "red"
        color.
-    </t>
-    <t><figure>
-      <artwork align="center" name="Network Topology"><![CDATA[
+        </t>
+        <artwork align="center" name="Network Topology"><![CDATA[
      ******
     A------C------E
     |*     |*     |
@@ -218,16 +196,14 @@ Figure 1: Network Topology]]></artwork>
      ******
 
          Figure 2: Network Topology]]></artwork>
-    </figure></t>
-    <t>
+        <t>
        Flex-Algorithm 128 is enabled on Nodes A, B, C, and D, with an EAG
        rule including "red" and the Metric-Type is designated to be a type
        other than the IGP metric. Flex-Algorithm allows OSPF to compute the
        paths along the constrained topology. The topology used by Flex-
        Algorithm 128 is shown in Figure 3.
-    </t>
-    <t><figure>
-      <artwork align="center" name="Topology of Flex-Algorithm 128"><![CDATA[
+        </t>
+        <artwork align="center" name="Topology of Flex-Algorithm 128"><![CDATA[
               A******C
               *      *
               *      *
@@ -235,8 +211,7 @@ Figure 1: Network Topology]]></artwork>
               B******D
 
 Figure 3: Topology of Flex-Algorithm 128]]></artwork>
-    </figure></t>
-    <t>
+        <t>
        Flex-Algorithm 128 is used for routing particular flows, such as
        those for a network slice. The "red" links used by Flex-Algorithm
        128 are sub-interfaces with dedicated queues for guaranteed
@@ -248,15 +223,14 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
        these links may also be used for best-effort traffic. Therefore, it
        is a problem that the dedicated links for Flex-Algorithm are still
        reachable in base SPF calculation.
-    </t>
-    <t>
+        </t>
+        <t>
        If the IGP metrics for all the "red" links are advertised as
        unreachable, the base topology will be as shown in Figure 4,
        excluding all the "red" links. This allows only the network slice
        traffic to be routed on the "red" links by Flex-Algorithm 128.
-    </t>
-    <t><figure>
-      <artwork align="center" name="Base SPF Topology Excluding Unreachable Links"><![CDATA[
+        </t>
+        <artwork align="center" name="Base SPF Topology Excluding Unreachable Links"><![CDATA[
                   A------C------E
                   |      |      |
                   |      |      |
@@ -264,23 +238,23 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
                   B------D------F
 
 Figure 4: Base SPF Topology Excluding Unreachable Links]]></artwork>
-    </figure></t>
-  </section>
-</section>
-
-<section anchor="Solution based on LSLinkInfinity" title="Solution based on LSLinkInfinity">
-  <t>
+      </section>
+    </section>
+    <section anchor="Solution_based_on_LSLinkInfinity">
+      <name>Solution based on LSLinkInfinity</name>
+      <t>
     This document specifies that if the IGP metric of a link is
     advertised as LSLinkInfinity (0xffff), it MUST NOT be considered
     during the related SPF computation. This applies to both the Flex-
     Algorithm SPF and the base SPF as long as LSLinkInfinity is
     specified for the IGP metric.
-  </t>
-</section>
-
-<section anchor="Backward Compatibility" title="Backward Compatibility">
-  <section anchor="LSLinkInfinity Backward Compatibility" title="LSLinkInfinity Backward Compatibility">
-    <t>
+      </t>
+    </section>
+    <section anchor="Backward_Compatibility">
+      <name>Backward Compatibility</name>
+      <section anchor="LSLinkInfinity_Backward_Compatibility">
+        <name>LSLinkInfinity Backward Compatibility</name>
+        <t>
       Prior to this specification, OSPF treated links advertised as
       LSLinkInfinity as reachable <xref target="RFC2328"/>. Hence, partial deployment of
       this specification may result in routing loops due to inconsistent
@@ -288,13 +262,12 @@ Figure 4: Base SPF Topology Excluding Unreachable Links]]></artwork>
       in Figure 5, link D-F is advertised with
       LSLinkInfinity(65535/0xffff). Router A supports LSLinkInfinity as
       unreachable, but router B does not. Router A considers link D-F as
-      reachable, and the shortest path to F is A->B->D->F. Router B
+      reachable, and the shortest path to F is A-&gt;B-&gt;D-&gt;F. Router B
       considers link D-F as unreachable, and the shortest path to F is
-      B->A->C->E->F. As a result, A forwards the packets to B, but B
+      B-&gt;A-&gt;C-&gt;E-&gt;F. As a result, A forwards the packets to B, but B
       returns them to A, which results in a routing loop.
-    </t>
-    <t><figure>
-      <artwork align="center" name="Inconsistent LSLinkInfinity Interpretation Causing Loops"><![CDATA[
+        </t>
+        <artwork align="center" name="Inconsistent LSLinkInfinity Interpretation Causing Loops"><![CDATA[
       40000  40000      Traffic: A->F
     A------C------E       A considers link D-F as reachable
     |             |         A's shortest path: A->B->D->F
@@ -304,19 +277,28 @@ Figure 4: Base SPF Topology Excluding Unreachable Links]]></artwork>
         5    65535
 
 Figure 5: Inconsistent LSLinkInfinity Interpretation Causing Loops]]></artwork>
-    </figure></t>
-    <t>
+        <t>
        To provide backward compatibility, this document defines that
        routers supporting LSLinkInfinity for unreachable links MUST
        advertise a Router Information (RI) LSA advertisement of a Router
        Informational Capabilities TLV <xref target="RFC7770"/> including the following
        Router Informational Capability Bit:
-    </t>
-    <texttable align="center">
-      <ttcol>Bit</ttcol><ttcol>Capabilities</ttcol>
-      <c>TBA</c><c>Unreachable Link support</c>
-    </texttable>
-    <t>
+        </t>
+        <table align="center">
+          <thead>
+            <tr>
+              <th>Bit</th>
+              <th>Capabilities</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>TBA</td>
+              <td>Unreachable Link support</td>
+            </tr>
+          </tbody>
+        </table>
+        <t>
        OSPF Routers MUST NOT treat links with an advertised metric of
        LSLinkInfinity as unreachable unless all routers in the OSPF area
        have advertised this capability. If all OSPF Routers in the area
@@ -326,37 +308,44 @@ Figure 5: Inconsistent LSLinkInfinity Interpretation Causing Loops]]></artwork>
        supporting the Unreachable Link support capability changes to 0 or
        from 0 to greater than 0, all OSPF routers in the area MUST
        recalculate their routes.
-    </t>
-    <t>
+        </t>
+        <t>
        An IGP metic with LSLinkInfinity indicating a link is unreachable is
        applicable to the following TLVs/LSAs:
-    </t>
-    <list style="symbols">
-      <t>
+        </t>
+        <ul spacing="normal">
+          <li>
+            <t>
        The Router-LSA <xref target="RFC2328"/> and <xref target="RFC5340"/>
-      </t>
-      <t>
+            </t>
+          </li>
+          <li>
+            <t>
        The OSPFv2 Extended Link TLV of OSPFv2 Extended Link Opaque LSA
       <xref target="RFC7684"/>
-      </t>
-      <t>
+            </t>
+          </li>
+          <li>
+            <t>
        The Router-Link TLV of OSPFv3 E-Router-LSA <xref target="RFC8362"/>
-      </t>
-    </list>
-  </section>
-  <section anchor="Stub Router Advertisement Backward Compatibility" title="Stub Router Advertisement Backward Compatibility">
-    <t>
+            </t>
+          </li>
+        </ul>
+      </section>
+      <section anchor="Stub_Router_Advertisement_Backward_Compatibility">
+        <name>Stub Router Advertisement Backward Compatibility</name>
+        <t>
       Stub Router Advertisement <xref target="RFC6987"/> defines MaxLinkMetric (0xffff)
       to indicate a router-LSA link should not be used for transit
       traffic.
-    </t>
-    <t>
+        </t>
+        <t>
       This document updates <xref target="RFC6987"/> and <xref target="RFC8770"/>. When an OSPFv2 router
       supports the Unreachable Link support capability defined in this
       document, the OSPFv2 stub router MaxLinkMetric(0xffff) MUST be
       updated to MaxReachableLinkMetric(0xfffe).
-    </t>
-    <t>
+        </t>
+        <t>
        When an OSPFv2 router supports <xref target="RFC6987"/> and the Unreachable Link
        support capability defined in this document, it MUST also support
        <xref target="RFC8770"/>. When announcing itself as a stub router, it MUST set the
@@ -367,77 +356,91 @@ Figure 5: Inconsistent LSLinkInfinity Interpretation Causing Loops]]></artwork>
        section 3, all routers in the area will also support the H-bit and
        the usage of MaxReachableLinkMetric to indicate an OSPF stub router
        link should not be used for transit traffic.
-    </t>
-    <t>
+        </t>
+        <t>
        An OSPFv3 router can simply use the R-bit <xref target="RFC5340"/> for stub router
        advertisement.
-    </t>
-  </section>
-</section>
-
-<section anchor="Management Considerations" title="Management Considerations">
-  <t>
+        </t>
+      </section>
+    </section>
+    <section anchor="Management_Considerations">
+      <name>Management Considerations</name>
+      <t>
     Support of the Unreachable Link support capability SHOULD be
     configurable.
-  </t>
-  <t>
+      </t>
+      <t>
     In some networks, the operator may still want links with maximum
     metric(0xffff) to be treated as reachable. For example, when auto-
     costing of links is used and there is a mix of low-speed and high-
     speed links. In such cases, the updated routers can disable the
     Unreachable Link support capability and still treat links with
     maximum metric as reachable.
-  </t>
-  <t>
+      </t>
+      <t>
     It is also RECOMMENDED that implementations supporting this document
     and auto-costing limit the maximum computed cost to
     MaxReachableLinkMetric (0xfffe).
-  </t>
-</section>
-
-<section anchor="Security Considerations" title="Security Considerations">
-  <t>
+      </t>
+    </section>
+    <section anchor="Security_Considerations">
+      <name>Security Considerations</name>
+      <t>
     The document does not introduce any new security issues for the OSPF
     protocol. The security considerations for <xref target="RFC2328"/>,<xref target="RFC5340"/>,
     <xref target="RFC6987"/>, and <xref target="RFC7770"/> are applicable to protocol extension.
-  </t>
-</section>
-
-<section anchor="IANA" title="IANA Considerations">
-  <t>
+      </t>
+    </section>
+    <section anchor="IANA">
+      <name>IANA Considerations</name>
+      <t>
     This document defines a new bit in the registry "OSPF Router
     Functional Capability Bits":
-  </t>
-  <texttable align="center">
-    <ttcol>Bit Number</ttcol><ttcol>Capability Name</ttcol><ttcol>Reference</ttcol>
-    <c>0(TBD)</c>
-    <c>Unreachable Link support</c>
-    <c>This document</c>
-  </texttable>
-</section>
-<section title="Contributors">
-  <t>The following individuals have contributed to this document:</t>
-  <list style="empty">
-      <t>Mengxiao Chen<br/>
+      </t>
+      <table align="center">
+        <thead>
+          <tr>
+            <th>Bit Number</th>
+            <th>Capability Name</th>
+            <th>Reference</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>0(TBD)</td>
+            <td>Unreachable Link support</td>
+            <td>This document</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    <section>
+      <name>Contributors</name>
+      <t>The following individuals have contributed to this document:</t>
+      <ul empty="true" spacing="normal">
+        <li>
+          <t>Mengxiao Chen<br/>
       New H3C Technologies<br/>
       China<br/>
       Email: chen.mengxiao@h3c.com
-      </t>
-      <t>Yanrong Liang<br/>
+          </t>
+        </li>
+        <li>
+          <t>Yanrong Liang<br/>
       Ruijie Networks Co., Ltd.<br/>
       China<br/>
       Email: liangyanrong@ruijie.com.cn
-      </t>
-  </list>
-</section>
-<!-- <section anchor="Acknowledgements" title="Acknowledgements">
+          </t>
+        </li>
+      </ul>
+    </section>
+    <!-- <section anchor="Acknowledgements" title="Acknowledgements">
 <t>
 	The author would like to thank Jeff Haas for his valuable input.
 </t>
 </section> -->
 
   </middle>
-
   <!--  *****BACK MATTER ***** -->
 
   <back>
