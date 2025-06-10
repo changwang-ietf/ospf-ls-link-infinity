@@ -33,7 +33,7 @@
 <?rfc subcompact="no" ?>
 <!-- keep one blank line between list items -->
 <!-- end of list of popular I-D processing instructions -->
-<rfc xmlns:xi="http://www.w3.org/2001/XInclude" category="std" docName="draft-ietf-lsr-ospf-ls-link-infinity-03"
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude" category="std"
      ipr="trust200902" consensus="true" submissionType="IETF" updates="6987, 8770" tocInclude="true"
      tocDepth="4" symRefs="true" sortRefs="true" version="3">
   <!-- xml2rfc v2v3 conversion 3.28.1 -->
