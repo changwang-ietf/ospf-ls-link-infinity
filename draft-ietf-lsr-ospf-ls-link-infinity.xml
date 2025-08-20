@@ -34,7 +34,7 @@ most I-Ds might want to use.
 <!-- keep one blank line between list items -->
 <!-- end of list of popular I-D processing instructions -->
 <rfc xmlns:xi="http://www.w3.org/2001/XInclude"
-     category="std" docName="draft-ietf-lsr-ospf-ls-link-infinity-05"
+     category="std" docName="draft-ietf-lsr-ospf-ls-link-infinity-06"
      ipr="trust200902"
      obsoletes=""
      updates="6987, 8870"
@@ -56,7 +56,7 @@ most I-Ds might want to use.
 
   <front>
     <title abbrev="Advertising Unreachable Links in OSPF">Advertising Unreachable Links in OSPF</title>
-    <seriesInfo name="Internet-Draft" value="draft-ietf-lsr-ospf-ls-link-infinity-05"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-lsr-ospf-ls-link-infinity-06"/>
     <!-- add 'role="editor"' below for the editors if appropriate -->
 
     <!-- Another author who claims to be an editor -->
@@ -304,8 +304,8 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
           To provide backward compatibility, this document defines that
           routers supporting LSLinkInfinity for unreachable links MUST
           advertise a Router Information (RI) LSA advertisement of a Router
-          Informational Capabilities TLV <xref target="RFC7770"/> including the following
-          Router Informational Capability Bit:
+          Functional Capabilities TLV <xref target="RFC7770"/> including the following
+          Router Functional Capability Bit:
         </t>
         <table align="center">
           <thead>
