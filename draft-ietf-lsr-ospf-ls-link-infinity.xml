@@ -34,7 +34,7 @@ most I-Ds might want to use.
 <!-- keep one blank line between list items -->
 <!-- end of list of popular I-D processing instructions -->
 <rfc xmlns:xi="http://www.w3.org/2001/XInclude"
-     category="std" docName="draft-ietf-lsr-ospf-ls-link-infinity-07"
+     category="std" docName="draft-ietf-lsr-ospf-ls-link-infinity-08"
      ipr="trust200902"
      obsoletes=""
      updates="6987, 8770"
@@ -56,7 +56,7 @@ most I-Ds might want to use.
 
   <front>
     <title abbrev="Advertising Unreachable Links in OSPF">Advertising Unreachable Links in OSPF</title>
-    <seriesInfo name="Internet-Draft" value="draft-ietf-lsr-ospf-ls-link-infinity-07"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-lsr-ospf-ls-link-infinity-08"/>
     <!-- add 'role="editor"' below for the editors if appropriate -->
 
     <!-- Another author who claims to be an editor -->
@@ -121,19 +121,20 @@ most I-Ds might want to use.
     <keyword>ls</keyword>
     <abstract>
       <t>
-	In certain scenarios, it is necessary to advertise unreachable links
-        in OSPF, which should be explicitly excluded from the related SPF
-        calculation. This document specifies using LSLinkInfinity(0xffff) to
-        advertise an OSPF link as unreachable.
+	In certain scenarios, it is necessary to advertise OSPF links that
+        are not applicable to the default SPF calculation for other
+        purposes.
+        In order to advertise these links and not use them in the base SPF
+        calculation, the metric LSLinkInfinity (0xffff) is used to specify
+        that the link is unreachable.
       </t>
       <t>
         Stub Router Advertisement (RFC 6987) defines MaxLinkMetric (0xffff)
         to indicate a router-LSA link should not be used for transit
-        traffic. This document updates RFC 6987 and RFC 8770. When an
-        OSPFv2 router supports the Unreachable Link support capability
-        defined in this document, the OSPFv2 stub router
-        MaxLinkMetric(0xffff) MUST be updated to
-        MaxReachableLinkMetric(0xfffe).
+        traffic. When an OSPFv2 router supports the Unreachable Link support
+        capability defined in this document, OSPFv2 Stub Router links are 
+        advertised as MaxReachableLinkMetric (0xfffe) rather than
+        MaxLinkMetric (0xffff). This document updates RFC 6987 and RFC 8770.
       </t>
     </abstract>
   </front>
@@ -141,17 +142,20 @@ most I-Ds might want to use.
     <section anchor="Introduction">
       <name>Introduction</name>
       <t>
-        In specific scenarios, there is a requirement to advertise
-        unreachable links in OSPF, which MUST NOT be considered during the
-        standard SPF computation. For example, a link may be available for
+	In certain scenarios, it is necessary to advertise OSPF links that
+        are not applicable to the default SPF calculation for other
+        purposes. For example, a link may be available for
         Traffic Engineering (TE) purposes but not suitable for hop-by-hop
         routing. Another example is an OSPF link with dedicated resources
-        for a network slice included in a Flexible Algorithm (Flex-
-        Algorithm) but excluded from the default topology.
+        for a network slice included in a Flexible Algorithm <xref target="RFC9350"/>
+        excluded from the default algorithm.
       </t>
       <t>
-        his document specifies using LSLinkInfinity(oxffff) to advertise
-        an OSPF link as unreachable.
+        In order to advertise these links as unreachable, the metric
+        LSLinkInfinity (0xffff) is used to specify
+        that the link is unreachable and OSPF routers supporting this
+        specification will exclude the link from SPF calculations (subject to
+        backward-compatibility constraints, refer to <xref target="Backward_Compatibility"/>).
       </t>
       <section anchor="Requirements_Language">
         <name>Requirements Language</name>
@@ -159,8 +163,8 @@ most I-Ds might want to use.
           The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL
           NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED",
           "MAY", and "OPTIONAL" in this document are to be interpreted as
-          described in BCP 14 <xref target="RFC2119"/> <xref target="RFC8174"/> when, and only when, they appear in all
-          capitals, as shown here.
+          described in BCP 14 <xref target="RFC2119"/> <xref target="RFC8174"/> when,
+          and only when, they appear in all capitals, as shown here.
         </t>
       </section>
     </section>
@@ -169,9 +173,10 @@ most I-Ds might want to use.
       <section anchor="Case_1">
         <name>Case 1: Traffic Engineering</name>
         <t>
-          A network topology is shown in Figure 1.  There is a link available
-          for Traffic Engineering only between Node A and E.  If this link is included in the
-          SPF calculations, best-effort traffic may be routed over the link.
+          A network topology is shown in Figure 1.  The OSPF link between Node A and E is
+          only to be used for traffic engineering. Since the OSPF link is advertised
+          by default, it will be include in the base SPF calculation for the default topology
+          and may be used for hop-by-hop routing in the default topology.
         </t>
         <artwork align="center" name="Network Topology"><![CDATA[
           TE Link
@@ -192,7 +197,7 @@ most I-Ds might want to use.
         <t>
           A network topology is shown in Figure 2. The links between nodes A,
           and B and between C and D are to be used exclusively for a
-          flex-algorithm devoted to specific traffic.
+          flex-algorithm <xref target="RFC9350"/> devoted to specific traffic.
           These links have an Extended
           Administrative Group (EAG) <xref target="RFC7308"/> attribute specifying
           the "Red" color.
@@ -211,9 +216,9 @@ most I-Ds might want to use.
         <t>
           Flex-Algorithm 128 is enabled on Nodes A, B, C, and D, with an EAG
           rule including "Red" and the Metric-Type is designated to be a type
-          other than the IGP metric. Flex-Algorithm allows OSPF to compute the
-          paths along the constrained topology. The topology used by Flex-
-          Algorithm 128 is shown in Figure 3.
+          other than the IGP metric. OSPF will compute routes for Flex-Algorithm
+          128 using these links. The topology associated with Flex-Algorithm 128
+          is shown in Figure 3.
         </t>
         <artwork align="center" name="Topology of Flex-Algorithm 128"><![CDATA[
               A******C
@@ -224,23 +229,18 @@ most I-Ds might want to use.
 
 Figure 3: Topology of Flex-Algorithm 128]]></artwork>
         <t>
-          Flex-Algorithm 128 is used for routing particular flows, such as
-          those for specific traffic. The "Red" links used by Flex-Algorithm
-          128 are sub-interfaces with dedicated queues for guaranteed
-          bandwidth. Sub-interfaces in other traffic and default
-          topology are omitted from the example figure for clarity. So, it is
-          expected that only the particular flows are routed on these links
-          using Flex-Algorithm 128. However, these links are also contained in
-          the default topology computed by the normal SPF calculation, and
-          these links may also be used for best-effort traffic. Therefore, it
-          is a problem that the dedicated links for Flex-Algorithm are still
-          reachable in base SPF calculation.
+          The "Red" links that are used by Flex-Algorithm
+          128 calculation.  However, these
+          "Red" links are also included in the default algorithm
+          calculation <xref target="RFC9350"/> since they are reachable.
+          Note that links used by the default algorithm are omitted from Figure 3
+          for clarity. 
         </t>
         <t>
           If the IGP metrics for all the "Red" links are advertised as
-          unreachable, the base topology will be as shown in Figure 4,
-          excluding all the "Red" links. This allows Flex-Algorithm 128
-          to route only specific traffic on the "Red" links.
+          unreachable, they will be excluded from the default SPF calculation
+          as shown in Figure 4, This allows the "Red" links from A to B and C to D
+          to be used exclusively by the Flex-Algorithm 128 calculation.
         </t>
         <artwork align="center" name="Base SPF Topology Excluding Unreachable Links"><![CDATA[
                   A------C------E
@@ -268,7 +268,7 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
         While the interpretaion of LSLinkInfinity is only required in the base
         topology as other topologies are optional, OSPF routers supporting this
         specification MUST consistently interpret LSLinkInfinity as unreachable
-        during the related SPF computation. This applies to both the Flex-
+        during the associated SPF computation. This applies to both the Flex-
         Algorithm SPF and the base SPF as long as LSLinkInfinity is
         specified for the IGP metric.
       </t>
@@ -279,7 +279,7 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
       <ul spacing="normal">
         <li>
           <t>
-            The Router-LSA <xref target="RFC2328"/> and <xref target="RFC5340"/>
+            The Router-LSA <xref target="RFC2328"/> <xref target="RFC5340"/>
           </t>
         </li>
         <li>
@@ -295,7 +295,7 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
         </li>
       </ul>
       </section>
-      <section anchor="LSLinkInfinity_Backward_Compatibility">
+      <section anchor="Backward_Compatibility">
         <name>Unreachable Link Backward Compatibility</name>
         <t>
           Prior to this specification, OSPF treated links advertised as
@@ -375,7 +375,7 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
           advertise all its non-stub links with a link cost of MaxReachableLinkMetric (0xfffe).
           Since MaxLinkMetric will not be used to indicate a link is unreachable unless all OSPFv2
           routers in the area support this specification as specified in
-          <xref target="LSLinkInfinity_Backward_Compatibility"/>, all routers in the area will
+          <xref target="Backward_Compatibility"/>, all routers in the area will
           also support the usage of MaxReachableLinkMetric to discourage the usage of stub router
           links for transit traffic.
         </t>
@@ -785,6 +785,7 @@ reference: RFC XXXX
       <?rfc include="reference.RFC.8446.xml"?>
       <?rfc include="reference.RFC.8770.xml"?>
       <?rfc include="reference.RFC.9000.xml"?>
+      <?rfc include="reference.RFC.9350.xml"?>
     </references>
   </references>
 </back>
