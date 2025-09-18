@@ -34,7 +34,7 @@ most I-Ds might want to use.
 <!-- keep one blank line between list items -->
 <!-- end of list of popular I-D processing instructions -->
 <rfc xmlns:xi="http://www.w3.org/2001/XInclude"
-     category="std" docName="draft-ietf-lsr-ospf-ls-link-infinity-08"
+     category="std" docName="draft-ietf-lsr-ospf-ls-link-infinity-09"
      ipr="trust200902"
      obsoletes=""
      updates="6987, 8770"
@@ -56,7 +56,7 @@ most I-Ds might want to use.
 
   <front>
     <title abbrev="Advertising Unreachable Links in OSPF">Advertising Unreachable Links in OSPF</title>
-    <seriesInfo name="Internet-Draft" value="draft-ietf-lsr-ospf-ls-link-infinity-08"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-lsr-ospf-ls-link-infinity-09"/>
     <!-- add 'role="editor"' below for the editors if appropriate -->
 
     <!-- Another author who claims to be an editor -->
@@ -122,8 +122,8 @@ most I-Ds might want to use.
     <abstract>
       <t>
 	In certain scenarios, it is necessary to advertise OSPF links that
-        are not applicable to the default SPF calculation for other
-        purposes.
+        are not applicable to the default SPF (Shortest Path First) calculation
+        for other purposes.
         In order to advertise these links and not use them in the base SPF
         calculation, the metric LSLinkInfinity (0xffff) is used to specify
         that the link is unreachable.
@@ -134,7 +134,8 @@ most I-Ds might want to use.
         traffic. When an OSPFv2 router supports the Unreachable Link support
         capability defined in this document, OSPFv2 Stub Router links are 
         advertised as MaxReachableLinkMetric (0xfffe) rather than
-        MaxLinkMetric (0xffff). This document updates RFC 6987 and RFC 8770.
+        MaxLinkMetric (0xffff). This document updates RFC 6987 and RFC 8770
+        with respect to the advertisement of MaxReachableLinkMetric rather than MaxLinkMetric.
       </t>
     </abstract>
   </front>
@@ -146,8 +147,8 @@ most I-Ds might want to use.
         are not applicable to the default SPF calculation for other
         purposes. For example, a link may be available for
         Traffic Engineering (TE) purposes but not suitable for hop-by-hop
-        routing. Another example is an OSPF link with dedicated resources
-        for a network slice included in a Flexible Algorithm <xref target="RFC9350"/>
+        routing. Another example is an OSPF link used exclusively by a
+        Flexible Algorithm <xref target="RFC9350"/> but
         excluded from the default algorithm.
       </t>
       <t>
@@ -175,7 +176,7 @@ most I-Ds might want to use.
         <t>
           A network topology is shown in Figure 1.  The OSPF link between Node A and E is
           only to be used for traffic engineering. Since the OSPF link is advertised
-          by default, it will be include in the base SPF calculation for the default topology
+          by default, it will be included in the base SPF calculation for the default topology
           and may be used for hop-by-hop routing in the default topology.
         </t>
         <artwork align="center" name="Network Topology"><![CDATA[
@@ -195,7 +196,7 @@ most I-Ds might want to use.
       <section anchor="Case_2">
         <name>Case 2: Flexible Algorithm</name>
         <t>
-          A network topology is shown in Figure 2. The links between nodes A,
+          A network topology is shown in Figure 2. The links between nodes A
           and B and between C and D are to be used exclusively for a
           flex-algorithm <xref target="RFC9350"/> devoted to specific traffic.
           These links have an Extended
@@ -254,26 +255,26 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
       </section>
     </section>
     <section anchor="Solution_based_on_LSLinkInfinity">
-      <name>LSInfinity-Based Solution</name>
+      <name>LSLinkInfinity-Based Solution</name>
     <section anchor="Unreachable_link">
       <name>Unreachable Link Advertisement</name>
       <t>
         This document specifies that if the IGP metric of a link is
         advertised as LSLinkInfinity (0xffff), it MUST NOT be considered
-        during the related SPF computation. This applies to both the Flex-
-        Algorithm SPF and the base SPF as long as LSLinkInfinity is
+        during the associated SPF computation. This applies to both the
+        Flex-Algorithm SPF and the base SPF as long as LSLinkInfinity is
         specified for the IGP metric.
       </t>
       <t>
-        While the interpretaion of LSLinkInfinity is only required in the base
-        topology as other topologies are optional, OSPF routers supporting this
-        specification MUST consistently interpret LSLinkInfinity as unreachable
-        during the associated SPF computation. This applies to both the Flex-
-        Algorithm SPF and the base SPF as long as LSLinkInfinity is
-        specified for the IGP metric.
+        While the interpretation of LSLinkInfinity is only required in the base
+        topology as other topologies are optional <xref target="RFC4915"/>,
+        OSPF routers supporting this specification MUST consistently interpret
+        LSLinkInfinity as unreachable during the associated SPF computation.
+        This applies to both the Flex-Algorithm SPF and the base SPF as long
+        as LSLinkInfinity is specified for the IGP metric.
       </t>
       <t>
-        An IGP metic with LSLinkInfinity indicating a link is unreachable is
+        An IGP metric with LSLinkInfinity indicating a link is unreachable is
         applicable to the following TLVs/LSAs:
       </t>
       <ul spacing="normal">
@@ -301,7 +302,7 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
           Prior to this specification, OSPF treated links advertised as
           LSLinkInfinity as reachable <xref target="RFC2328"/>. Hence, partial deployment of
           this specification may result in routing loops due to inconsistent
-          interpretation of LSLinkInfinity. For example in the network shown
+          interpretation of LSLinkInfinity. For example, in the network shown
           in Figure 5, link D-F is advertised with
           LSLinkInfinity (65535/0xffff). Router B supports
           LSLinkInfinity as unreachable, but router A doesn't.
@@ -363,16 +364,18 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
           traffic.
         </t>
         <t>
-          This document updates <xref target="RFC6987"/> and <xref target="RFC8770"/>. When an
-          OSPFv2 router
+          When an OSPFv2 router
           supports the Unreachable Link support capability defined in this
-          document, the OSPFv2 stub router MaxLinkMetric(0xffff) MUST be
-          updated to MaxReachableLinkMetric(0xfffe).
+          document, the OSPFv2 stub router MaxLinkMetric (0xffff) MUST be
+          updated to MaxReachableLinkMetric (0xfffe).
+          This document updates <xref target="RFC6987"/> and <xref target="RFC8770"/>
+          with respect to the advertisement of MaxReachableLinkMetric rather than
+          MaxLinkMetric.
         </t>
         <t>
           When an OSPFv2 router supports <xref target="RFC6987"/> and the Unreachable Link
           support capability defined in this document, it MUST also support
-          advertise all its non-stub links with a link cost of MaxReachableLinkMetric (0xfffe).
+          advertisement all its non-stub links with a link cost of MaxReachableLinkMetric (0xfffe).
           Since MaxLinkMetric will not be used to indicate a link is unreachable unless all OSPFv2
           routers in the area support this specification as specified in
           <xref target="Backward_Compatibility"/>, all routers in the area will
@@ -381,7 +384,7 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
         </t>
         <t>
           An OSPFv3 router can simply advertise R-bit in its router-LSA options <xref target="RFC5340"/>
-          to prevent usage stub router links for transit traffic.  Similarily, OSPFv2 routers supporting
+          to prevent usage stub router links for transit traffic.  Similarly, OSPFv2 routers supporting
           <xref target="RFC8770"/> can advertise the H-bit in the router-LSA options. 
         </t>
       </section>
@@ -394,11 +397,12 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
       </t>
       <t>
         In some networks, the operator may still want links with maximum
-        metric(0xffff) to be treated as reachable. For example, when auto-
-        costing of links is used and there is a mix of low-speed and high-
-        speed links. In such cases, the updated routers can disable the
-        Unreachable Link support capability and still treat links with
-        maximum metric as reachable.
+        metric (0xffff) to be treated as reachable. For example, when the cost
+        of links is automatically computed based on the inverse of the link's
+        bandwidth and and there is a mix of low-speed and high-speed links, the
+        computation may result in the maximum metric. In this case, OSPF routers
+        supporting this specification can disable the Unreachable Link support
+        capability and still treat links with maximum metric as reachable.
       </t>
       <t>
         It is also RECOMMENDED that implementations supporting this document
@@ -662,12 +666,13 @@ module ietf-ospf-unreachable-links {
         <xref target="RFC6987"/>, and <xref target="RFC7770"/> are applicable to protocol extension.
       </t>
       <t>
-        The ietf-ospf-link-unreach YANG module defines a data model that is
+        The ietf-ospf-unreachable-links YANG module defines a data model that is
         designed to be accessed via YANG-based management protocols, such as
-        NETCONF <xref target="RFC6241"/> and RESTCONF <xref target="RFC8040"/>.
-        These protocols have to use a secure transport layer (e.g., SSH
-        <xref target="RFC4252"/>, TLS <xref target="RFC8446"/>, and
-        QUIC <xref target="RFC9000"/>) and have to use mutual authentication.  
+        NETCONF <xref target="RFC6241"/> and RESTCONF <xref target="RFC8040"/>. These
+        YANG-based management protocols (1) have to use a secure transport layer
+        (e.g., SSH <xref target="RFC4252"/>, TLS <xref target="RFC8446"/>, and
+        QUIC <xref target="RFC9000"/>) and (2) have
+        to use mutual authentication.
       </t>
       <t>
         The NETCONF Access Control Model (NACM) <xref target="RFC8341"/> provides the
@@ -755,6 +760,10 @@ reference: RFC XXXX
     </li>
   </ul>
 </section>
+<section title="Acknowledgments">
+  <t>Thanks to Yingzhen Qu for providing the YANG model.</t>
+  <t>Thanks to Dhruv Dhody for OPS Directorate review and comments.</t>
+</section>
 </middle>
 <!--  *****BACK MATTER ***** -->
 
@@ -764,6 +773,7 @@ reference: RFC XXXX
       <?rfc include="reference.RFC.2119.xml"?>
       <?rfc include="reference.RFC.2328.xml"?>
       <?rfc include="reference.RFC.3688.xml"?>
+      <?rfc include="reference.RFC.4915.xml"?>
       <?rfc include="reference.RFC.6020.xml"?>
       <?rfc include="reference.RFC.6241.xml"?>
       <?rfc include="reference.RFC.7684.xml"?>
