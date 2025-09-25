@@ -15,6 +15,11 @@ module ietf-ospf-functional-capability {
     reference
       "RFC 9129: YANG Data Model for the OSPF Protocol";
   }
+  import iana-ospf-functional-cap-bits {
+    prefix iana-ospf-fc-bits;
+    reference
+      "RFC XXXX: Advertising Unreachable Links in OSPF";
+  }
 
   organization
     "IETF Link State Routing (LSR) Working Group";
@@ -62,11 +67,6 @@ module ietf-ospf-functional-capability {
       "RFC XXXX: Advertising Unreachable Links in OSPF";
   }
 
-  identity functional-capability {
-    description
-      "Base identity for router functional capabilities.";
-  }
-
   grouping router-functional-capabilities {
     description
       "Grouping for OSPF router capabilities TLV types.";
@@ -76,7 +76,7 @@ module ietf-ospf-functional-capability {
     container router-functional-capabilities {
       leaf-list functional-capability {
         type identityref {
-          base functional-capability;
+          base iana-ospf-fc-bits:functional-capability;
         }
         description
           "List of functional capabilities. This list

@@ -419,14 +419,17 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
           <xref target="RFC6241"/> or RESTCONF <xref target="RFC8040"/>.
         </t>
         <t>
-          This section defines two YANG data models that can be used to configure
-          and manage the usage of OSPF LSLinkInfinity for unreachable links as
-          defined in this document,
+          This section defines three YANG modules. Module iana-ospf-functional-cap-bits defines
+          the identities for OSPF Functional Capabilities as per the "OSPF Router Functional Capability Bits"
+          IANA registry <xref target="IANA-OSPF-FC-Bits" format="default" sectionFormat="of" derivedContent="IANA-OSPF-FC-Bits"/>.
+          Module ietf-ospf-functional-capability and module ietf-ospf-unreachable-links
+          can be used to configure and manage the usage of OSPF LSLinkInfinity for
+          unreachable links as defined in this document,
           which augments the OSPF YANG data model <xref target="RFC9129"/>
           and the YANG Data Model for Routing Management <xref target="RFC8349"/>.
         </t>
         <t>This document uses the graphical representation of data model per <xref target="RFC8340"/>.</t>
-        <section title="Tree Diagram for OSPF Functional Capability">
+        <section title="Tree for OSPF Functional Capability">
           <t>The following shows the tree diagram of the module for OSPF Functional Capability:</t>
           <artwork align="left" name="" type="" alt=""><![CDATA[
 module: ietf-ospf-functional-capability
@@ -465,7 +468,7 @@ module: ietf-ospf-functional-capability
 
           ]]></artwork>
         </section>
-        <section title="Tree Diagram for OSPF Advertising Unreachable Links">
+        <section title="Tree for OSPF Advertising Unreachable Links">
           <t>The following shows the tree diagram of the module for OSPF Advertising Unreachable Links:</t>
           <artwork align="left" name="" type="" alt=""><![CDATA[
 module: ietf-ospf-unreachable-links
@@ -475,6 +478,88 @@ module: ietf-ospf-unreachable-links
        +--rw enabled?   boolean
 
           ]]></artwork>
+        </section>
+        <section title="IANA Module for OSPF Functional Capability Bits">
+          <t>IANA has created a registry titled "OSPF Router Functional Capability Bits"
+             under the "Open Shortest Path First (OSPF) Parameters" registry group to
+             identify OSPF Router Functional Capabilities. Module iana-ospf-functional-cap-bits
+             is an IANA-maintained module, which defines the identities for the OSPF Functional Capabilities
+             as in the IANA "OSPF Router Functional Capability Bits" registry.</t>
+          <t>This module is maintained by IANA and will be updated if and when there is any change to the registry.</t>
+          <t>This document defines the initial version of the IANA-maintained YANG
+             module for OSPF Router Functional Capabilities that mirrors the IANA "OSPF Router Functional Capability Bits"
+             registry <xref target="IANA-OSPF-FC-Bits" format="default" sectionFormat="of" derivedContent="IANA-OSPF-FC-Bits"/>.</t>
+          <sourcecode name="iana-ospf-functional-cap-bits@2025-08-20.yang" type="" markers="true"><![CDATA[
+module iana-ospf-functional-cap-bits {
+  yang-version 1.1;
+  namespace
+    "urn:ietf:params:xml:ns:yang:iana-ospf-functional-cap-bits";
+  prefix iana-ospf-fc-bits;
+
+  organization
+    "Internet Assigned Numbers Authority (IANA)";
+  contact
+    "Internet Assigned Numbers Authority
+
+     ICANN
+     12025 Waterfront Drive, Suite 300
+     Los Angeles, CA 90094-2536
+     United States of America
+
+     Tel:    +1 310 301 5800
+     <mailto:iana@iana.org>";
+  description
+    "This YANG module defines the identities for OSPF Router
+     Functional Capabilities.
+
+     This YANG module is maintained by IANA and reflects the 'OSPF
+     Router Functional Capability Bits' registry.
+
+     Copyright (c) 2025 IETF Trust and the persons identified as
+     authors of the code.  All rights reserved.
+
+     Redistribution and use in source and binary forms, with or
+     without modification, is permitted pursuant to, and subject
+     to the license terms contained in, the Revised BSD License
+     set forth in Section 4.c of the IETF Trust's Legal Provisions
+     Relating to IETF Documents
+     (https://trustee.ietf.org/license-info).
+
+     All revisions of IETF and IANA published modules can be found
+     at the YANG Parameters registry group
+     (https://www.iana.org/assignments/yang-parameters).
+
+     This initial version of this YANG module is part of RFC XXXX
+     (https://www.rfc-editor.org/info/rfcXXXX); see the RFC itself
+     for full legal notices.
+
+     The latest version of this YANG module is available at
+     https://www.iana.org/assignments/yang-parameters.";
+
+  revision 2025-08-20 {
+    description
+      "Initial version";
+    reference
+      "RFC XXXX: Advertising Unreachable Links in OSPF";
+  }
+
+  identity functional-capability {
+    description
+      "Base identity for OSPF Router Functional Capabilities. The
+       functional capabilities are defined in IANA OSPF Router 
+       Functional Capability Bits registry.";
+  }
+
+  identity unreachable-link {
+    base functional-capability;
+    description
+      "Indicates that the OSPF router is capable of advertising
+       unreachable links.";
+    reference
+      "RFC XXXX: Advertising Unreachable Links in OSPF";
+  }
+}
+          ]]></sourcecode>
         </section>
         <section title="YANG Module for OSPF Functional Capability">
           <t>The following is the YANG module for OSPF Functional Capability:</t>
@@ -495,6 +580,11 @@ module ietf-ospf-functional-capability {
     prefix ospf;
     reference
       "RFC 9129: YANG Data Model for the OSPF Protocol";
+  }
+  import iana-ospf-functional-cap-bits {
+    prefix iana-ospf-fc-bits;
+    reference
+      "RFC XXXX: Advertising Unreachable Links in OSPF";
   }
 
   organization
@@ -543,11 +633,6 @@ module ietf-ospf-functional-capability {
       "RFC XXXX: Advertising Unreachable Links in OSPF";
   }
 
-  identity functional-capability {
-    description
-      "Base identity for router functional capabilities.";
-  }
-
   grouping router-functional-capabilities {
     description
       "Grouping for OSPF router capabilities TLV types.";
@@ -557,7 +642,7 @@ module ietf-ospf-functional-capability {
     container router-functional-capabilities {
       leaf-list functional-capability {
         type identityref {
-          base functional-capability;
+          base iana-ospf-fc-bits:functional-capability;
         }
         description
           "List of functional capabilities. This list
@@ -681,11 +766,6 @@ module ietf-ospf-unreachable-links {
     reference
       "RFC 9129: YANG Data Model for the OSPF Protocol";
   }
-  import ietf-ospf-functional-capability {
-    prefix ospf-fc;
-    reference
-      "RFC XXXX: Advertising Unreachable Links in OSPF";
-  }
 
   organization
     "IETF Link State Routing (LSR) Working Group";
@@ -732,13 +812,6 @@ module ietf-ospf-unreachable-links {
       "Initial version";
     reference
       "RFC XXXX: Advertising Unreachable Links in OSPF";
-  }
-
-  identity unreachable-link {
-    base ospf-fc:functional-capability;
-    description
-      "Indicates that the router is capable of advertising
-       unreachable links.";
   }
 
   augment "/rt:routing/rt:control-plane-protocols"
@@ -812,30 +885,37 @@ module ietf-ospf-unreachable-links {
     </section>
     <section anchor="IANA">
       <name>IANA Considerations</name>
-      <t>
-        This document defines a new bit in the registry "OSPF Router
-        Functional Capability Bits":
-      </t>
-      <table align="center">
-        <thead>
-          <tr>
-            <th>Bit Number</th>
-            <th>Capability Name</th>
-            <th>Reference</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>0(TBD)</td>
-            <td>Unreachable Link support</td>
-            <td>This document</td>
-          </tr>
-        </tbody>
-      </table>
-  <t>The IANA is requested to assign two new URIs from the IETF XML
-      registry (<xref target="RFC3688" format="default"/>). Authors are suggesting the
-      following URIs:</t>
-      <artwork align="left" name="" type="" alt=""><![CDATA[
+        <section title="Registering OSPF Router Functional Capability Bits">
+          <t>
+            This document defines a new bit in the registry "OSPF Router
+            Functional Capability Bits":
+          </t>
+          <table align="center">
+            <thead>
+              <tr>
+                <th>Bit Number</th>
+                <th>Capability Name</th>
+                <th>Reference</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>0(TBD)</td>
+                <td>Unreachable Link support</td>
+                <td>This document</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+        <section title="Registering YANG Modules">
+          <t>The IANA is requested to assign three new URIs from the IETF XML
+              registry (<xref target="RFC3688" format="default"/>). Authors are suggesting the
+              following URIs:</t>
+              <artwork align="left" name="" type="" alt=""><![CDATA[
+URI: urn:ietf:params:xml:ns:yang:iana-ospf-functional-cap-bits
+Registrant Contact: The IESG.
+XML: N/A, the requested URI is an XML namespace
+
 URI: urn:ietf:params:xml:ns:yang:ietf-ospf-functional-capability
 Registrant Contact: The IESG.
 XML: N/A, the requested URI is an XML namespace
@@ -844,20 +924,72 @@ URI: urn:ietf:params:xml:ns:yang:ietf-ospf-unreachable-links
 Registrant Contact: The IESG.
 XML: N/A, the requested URI is an XML namespace
 ]]></artwork>
-      <t> This document also requests two new YANG module names in the
-      YANG Module Names registry (<xref target="RFC6020" format="default"/>) with the following
-      suggestion :</t>
-      <artwork align="left" name="" type="" alt=""><![CDATA[
-name: ietf-ospf-functional-capability
-namespace: urn:ietf:params:xml:ns:yang:ietf-ospf-functional-capability
-prefix: ospf-fc
-reference: RFC XXXX
+        <t> This document also requests three new YANG module names in the
+        YANG Module Names registry (<xref target="RFC6020" format="default"/>) with the following
+        suggestion :</t>
+        <artwork align="left" name="" type="" alt=""><![CDATA[
+Name: iana-ospf-functional-cap-bits
+Maintained by IANA?  Y
+Namespace: urn:ietf:params:xml:ns:yang:iana-ospf-functional-cap-bits
+Prefix: iana-ospf-fc-bits
+Reference: RFC XXXX
 
-name: ietf-ospf-unreachable-links
-namespace: urn:ietf:params:xml:ns:yang:ietf-ospf-unreachable-links
-prefix: ospf-unreach-link
-reference: RFC XXXX
+Name: ietf-ospf-functional-capability
+Maintained by IANA?  N
+Namespace: urn:ietf:params:xml:ns:yang:ietf-ospf-functional-capability
+Prefix: ospf-fc
+Reference: RFC XXXX
+
+Name: ietf-ospf-unreachable-links
+Maintained by IANA?  N
+Namespace: urn:ietf:params:xml:ns:yang:ietf-ospf-unreachable-links
+Prefix: ospf-unreach-link
+Reference: RFC XXXX
 ]]></artwork>
+        </section>
+        <section title="IANA Module for OSPF Functional Capability Bits">
+          <t>This document defines the initial version of the IANA-maintained
+             "iana-ospf-functional-cap-bits" YANG module (Section 4.2).
+              The most recent version of the YANG module is available from
+              the "YANG Parameters" registry <xref target="IANA-YANG-Parameters" format="default" sectionFormat="of" derivedContent="IANA-YANG-Parameters"/>.</t>
+          <t>IANA is requested to add this note to the registry:</t>
+          <blockquote>
+            <t>New values must not be directly added to the "iana-ospf-functional-cap-bits" YANG module. They must instead be added to the "OSPF Router Functional Capability Bits" registry in the "Open Shortest Path First (OSPF) Parameters" registry group <xref target="IANA-OSPF-FC-Bits" format="default" sectionFormat="of" derivedContent="IANA-OSPF-FC-Bits"/>.</t>
+          </blockquote>
+          <t>When a value is added to the "OSPF Router Functional Capability Bits" registry, a new
+             "identity" statement needs to be added to the "iana-ospf-functional-cap-bits" YANG
+             module. The name of the "identity" MUST be the name as provided in
+             the registry. The "identity" statement should have the following
+             sub-statements defined:</t>
+            <artwork>
+  "base":          Contains 'functional-capability'.
+  
+  "description":   Replicates the description from the registry.
+
+  "reference":     Replicates the reference(s) from the registry with
+                   the title of the document(s) added.
+            </artwork>
+            <t>When the "iana-ospf-functional-cap-bits" YANG module is updated, a new "revision"
+               statement with a unique revision date must be added in front of the
+               existing revision statements.  The "revision" statement MUST contain
+               both "description" and "reference" substatements as follows.</t>
+            <t>The "description" substatement captures what changed in the
+               revised version. Typically, the description enumerates the changes
+               such as udpates to existing entries (e.g., update a description or
+               a reference) or notes which identities were added or had their status
+               changed (e.g., deprecated, discouraged, or obsoleted).</t>
+            <t>The "reference" substatement points specifically to the published
+               module (i.e., IANA_FOO_URL_With_REV). It may also point to an
+               authoritative event triggering the update to the YANG module. In all
+               cases, this event is cited from the underlying IANA registry. If the
+               update is triggered by an RFC, that RFC must also be included in
+               the "reference" substatement.</t>
+            <t>IANA is requested to add this note to <xref target="IANA-OSPF-FC-Bits" format="default" sectionFormat="of" derivedContent="IANA-OSPF-FC-Bits"/>:</t>
+            <blockquote>
+              <t>When this registry is modified, the YANG module "iana-ospf-functional-cap-bits"
+                 must be updated as defined in RFC XXXX.</t>
+            </blockquote>
+        </section>
     </section>
     <section>
       <name>Contributors</name>
@@ -889,6 +1021,24 @@ reference: RFC XXXX
 <back>
   <references title="References">
     <references title="Normative References">
+      <reference anchor="IANA-OSPF-FC-Bits" target="https://www.iana.org/assignments/ospf-parameters" quoteTitle="true" derivedAnchor="IANA-OSPF-FC-Bits">
+          <front>
+            <title>OSPF Router Functional Capability Bits</title>
+            <author>
+              <organization showOnFrontPage="true">IANA</organization>
+            </author>
+            <date/>
+          </front>
+      </reference>
+      <reference anchor="IANA-YANG-Parameters" target="https://www.iana.org/assignments/yang-parameters" quoteTitle="true" derivedAnchor="IANA-YANG-Parameters">
+          <front>
+            <title>YANG Module Names</title>
+            <author>
+              <organization showOnFrontPage="true">IANA</organization>
+            </author>
+            <date/>
+          </front>
+        </reference>
       <?rfc include="reference.RFC.2119.xml"?>
       <?rfc include="reference.RFC.2328.xml"?>
       <?rfc include="reference.RFC.3688.xml"?>

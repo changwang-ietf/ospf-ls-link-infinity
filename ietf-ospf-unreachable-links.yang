@@ -15,11 +15,6 @@ module ietf-ospf-unreachable-links {
     reference
       "RFC 9129: YANG Data Model for the OSPF Protocol";
   }
-  import ietf-ospf-functional-capability {
-    prefix ospf-fc;
-    reference
-      "RFC XXXX: Advertising Unreachable Links in OSPF";
-  }
 
   organization
     "IETF Link State Routing (LSR) Working Group";
@@ -66,13 +61,6 @@ module ietf-ospf-unreachable-links {
       "Initial version";
     reference
       "RFC XXXX: Advertising Unreachable Links in OSPF";
-  }
-
-  identity unreachable-link {
-    base ospf-fc:functional-capability;
-    description
-      "Indicates that the router is capable of advertising
-       unreachable links.";
   }
 
   augment "/rt:routing/rt:control-plane-protocols"
