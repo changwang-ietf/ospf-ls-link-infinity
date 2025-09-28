@@ -1,6 +1,7 @@
 module ietf-ospf-functional-capability {
   yang-version 1.1;
-  namespace "urn:ietf:params:xml:ns:yang:ietf-ospf-functional-capability";
+  namespace "urn:ietf:params:xml:ns:yang:"
+          + "ietf-ospf-functional-capability";
   prefix ospf-fc;
 
   import ietf-routing {

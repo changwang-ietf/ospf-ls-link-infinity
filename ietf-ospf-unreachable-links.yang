@@ -1,6 +1,7 @@
 module ietf-ospf-unreachable-links {
   yang-version 1.1;
-  namespace "urn:ietf:params:xml:ns:yang:ietf-ospf-unreachable-links";
+  namespace "urn:ietf:params:xml:ns:yang:"
+          + "ietf-ospf-unreachable-links";
   prefix ospf-unreach-link;
 
   import ietf-routing {

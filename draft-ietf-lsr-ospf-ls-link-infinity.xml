@@ -34,7 +34,7 @@ most I-Ds might want to use.
 <!-- keep one blank line between list items -->
 <!-- end of list of popular I-D processing instructions -->
 <rfc xmlns:xi="http://www.w3.org/2001/XInclude"
-     category="std" docName="draft-ietf-lsr-ospf-ls-link-infinity-10"
+     category="std" docName="draft-ietf-lsr-ospf-ls-link-infinity-11"
      ipr="trust200902"
      obsoletes=""
      updates="6987, 8770"
@@ -56,7 +56,7 @@ most I-Ds might want to use.
 
   <front>
     <title abbrev="Advertising Unreachable Links in OSPF">Advertising Unreachable Links in OSPF</title>
-    <seriesInfo name="Internet-Draft" value="draft-ietf-lsr-ospf-ls-link-infinity-10"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-lsr-ospf-ls-link-infinity-11"/>
     <!-- add 'role="editor"' below for the editors if appropriate -->
 
     <!-- Another author who claims to be an editor -->
@@ -492,8 +492,8 @@ module: ietf-ospf-unreachable-links
              <sourcecode name="iana-ospf-functional-cap-bits@2025-09-28.yang" type="" markers="true"><![CDATA[
 module iana-ospf-functional-cap-bits {
   yang-version 1.1;
-  namespace "urn:ietf:params:xml:ns:yang:
-             iana-ospf-functional-cap-bits";
+  namespace "urn:ietf:params:xml:ns:yang:"
+          + "iana-ospf-functional-cap-bits";
   prefix iana-ospf-fc-bits;
 
   organization
@@ -559,16 +559,15 @@ module iana-ospf-functional-cap-bits {
       "RFC XXXX: Advertising Unreachable Links in OSPF";
   }
 }
-             
-          ]]></sourcecode>
+        ]]></sourcecode>
         </section>
         <section title="YANG Module for OSPF Functional Capability">
           <t>The following is the YANG module for OSPF Functional Capability:</t>
           <sourcecode name="ietf-ospf-functional-capability@2025-09-28.yang" type="" markers="true"><![CDATA[
 module ietf-ospf-functional-capability {
   yang-version 1.1;
-  namespace "urn:ietf:params:xml:ns:yang:
-             ietf-ospf-functional-capability";
+  namespace "urn:ietf:params:xml:ns:yang:"
+          + "ietf-ospf-functional-capability";
   prefix ospf-fc;
 
   import ietf-routing {
@@ -745,6 +744,7 @@ module ietf-ospf-functional-capability {
                  Router Capabilities";
   }
 }
+
           ]]></sourcecode>
         </section>
         <section title="YANG Module for OSPF Advertising Unreachable Links">
@@ -752,8 +752,8 @@ module ietf-ospf-functional-capability {
           <sourcecode name="ietf-ospf-unreachable-links@2025-09-28.yang" type="" markers="true"><![CDATA[
 module ietf-ospf-unreachable-links {
   yang-version 1.1;
-  namespace "urn:ietf:params:xml:ns:yang:
-             ietf-ospf-unreachable-links";
+  namespace "urn:ietf:params:xml:ns:yang:"
+          + "ietf-ospf-unreachable-links";
   prefix ospf-unreach-link;
 
   import ietf-routing {
