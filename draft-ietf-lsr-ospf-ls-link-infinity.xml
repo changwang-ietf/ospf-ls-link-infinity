@@ -34,7 +34,7 @@ most I-Ds might want to use.
 <!-- keep one blank line between list items -->
 <!-- end of list of popular I-D processing instructions -->
 <rfc xmlns:xi="http://www.w3.org/2001/XInclude"
-     category="std" docName="draft-ietf-lsr-ospf-ls-link-infinity-09"
+     category="std" docName="draft-ietf-lsr-ospf-ls-link-infinity-10"
      ipr="trust200902"
      obsoletes=""
      updates="6987, 8770"
@@ -56,7 +56,7 @@ most I-Ds might want to use.
 
   <front>
     <title abbrev="Advertising Unreachable Links in OSPF">Advertising Unreachable Links in OSPF</title>
-    <seriesInfo name="Internet-Draft" value="draft-ietf-lsr-ospf-ls-link-infinity-09"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-lsr-ospf-ls-link-infinity-10"/>
     <!-- add 'role="editor"' below for the editors if appropriate -->
 
     <!-- Another author who claims to be an editor -->
@@ -132,7 +132,7 @@ most I-Ds might want to use.
         Stub Router Advertisement (RFC 6987) defines MaxLinkMetric (0xffff)
         to indicate a router-LSA link should not be used for transit
         traffic. When an OSPFv2 router supports the Unreachable Link support
-        capability defined in this document, OSPFv2 Stub Router links are 
+        capability defined in this document, OSPFv2 Stub Router links are
         advertised as MaxReachableLinkMetric (0xfffe) rather than
         MaxLinkMetric (0xffff). This document updates RFC 6987 and RFC 8770
         with respect to the advertisement of MaxReachableLinkMetric rather than MaxLinkMetric.
@@ -235,7 +235,7 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
           "Red" links are also included in the default algorithm
           calculation <xref target="RFC9350"/> since they are reachable.
           Note that links used by the default algorithm are omitted from Figure 3
-          for clarity. 
+          for clarity.
         </t>
         <t>
           If the IGP metrics for all the "Red" links are advertised as
@@ -385,7 +385,7 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
         <t>
           An OSPFv3 router can simply advertise R-bit in its router-LSA options <xref target="RFC5340"/>
           to prevent usage stub router links for transit traffic.  Similarly, OSPFv2 routers supporting
-          <xref target="RFC8770"/> can advertise the H-bit in the router-LSA options. 
+          <xref target="RFC8770"/> can advertise the H-bit in the router-LSA options.
         </t>
       </section>
     </section>
@@ -433,38 +433,38 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
           <t>The following shows the tree diagram of the module for OSPF Functional Capability:</t>
           <artwork align="left" name="" type="" alt=""><![CDATA[
 module: ietf-ospf-functional-capability
-  augment /rt:routing/rt:control-plane-protocols
-            /rt:control-plane-protocol/ospf:ospf/ospf:areas/ospf:area
-            /ospf:database/ospf:area-scope-lsa-type
-            /ospf:area-scope-lsas/ospf:area-scope-lsa/ospf:version
-            /ospf:ospfv2/ospf:ospfv2/ospf:body/ospf:opaque
-            /ospf:ri-opaque/ospf:router-capabilities-tlv:
-    +--ro router-functional-capabilities
-      +--ro functional-capability*   identityref
-  augment /rt:routing/rt:control-plane-protocols
-            /rt:control-plane-protocol/ospf:ospf/ospf:database
-            /ospf:as-scope-lsa-type/ospf:as-scope-lsas
-            /ospf:as-scope-lsa/ospf:version/ospf:ospfv2/ospf:ospfv2
-            /ospf:body/ospf:opaque/ospf:ri-opaque
-            /ospf:router-capabilities-tlv:
-    +--ro router-functional-capabilities
-      +--ro functional-capability*   identityref
-  augment /rt:routing/rt:control-plane-protocols
-            /rt:control-plane-protocol/ospf:ospf/ospf:database
-            /ospf:as-scope-lsa-type/ospf:as-scope-lsas
-            /ospf:as-scope-lsa/ospf:version/ospf:ospfv3/ospf:ospfv3
-            /ospf:body/ospf:router-information
-            /ospf:router-capabilities-tlv:
-    +--ro router-functional-capabilities
-      +--ro functional-capability*   identityref
-  augment /rt:routing/rt:control-plane-protocols
-            /rt:control-plane-protocol/ospf:ospf/ospf:areas/ospf:area
-            /ospf:database/ospf:area-scope-lsa-type
-            /ospf:area-scope-lsas/ospf:area-scope-lsa/ospf:version
-            /ospf:ospfv3/ospf:ospfv3/ospf:body/ospf:router-information
-            /ospf:router-capabilities-tlv:
-    +--ro router-functional-capabilities
-      +--ro functional-capability*   identityref
+ augment /rt:routing/rt:control-plane-protocols
+           /rt:control-plane-protocol/ospf:ospf/ospf:areas/ospf:area
+           /ospf:database/ospf:area-scope-lsa-type
+           /ospf:area-scope-lsas/ospf:area-scope-lsa/ospf:version
+           /ospf:ospfv2/ospf:ospfv2/ospf:body/ospf:opaque
+           /ospf:ri-opaque/ospf:router-capabilities-tlv:
+   +--ro router-functional-capabilities
+     +--ro functional-capability*   identityref
+ augment /rt:routing/rt:control-plane-protocols
+           /rt:control-plane-protocol/ospf:ospf/ospf:database
+           /ospf:as-scope-lsa-type/ospf:as-scope-lsas
+           /ospf:as-scope-lsa/ospf:version/ospf:ospfv2/ospf:ospfv2
+           /ospf:body/ospf:opaque/ospf:ri-opaque
+           /ospf:router-capabilities-tlv:
+   +--ro router-functional-capabilities
+     +--ro functional-capability*   identityref
+ augment /rt:routing/rt:control-plane-protocols
+           /rt:control-plane-protocol/ospf:ospf/ospf:database
+           /ospf:as-scope-lsa-type/ospf:as-scope-lsas
+           /ospf:as-scope-lsa/ospf:version/ospf:ospfv3/ospf:ospfv3
+           /ospf:body/ospf:router-information
+           /ospf:router-capabilities-tlv:
+   +--ro router-functional-capabilities
+     +--ro functional-capability*   identityref
+ augment /rt:routing/rt:control-plane-protocols
+           /rt:control-plane-protocol/ospf:ospf/ospf:areas/ospf:area
+           /ospf:database/ospf:area-scope-lsa-type
+           /ospf:area-scope-lsas/ospf:area-scope-lsa/ospf:version
+           /ospf:ospfv3/ospf:ospfv3/ospf:body/ospf:router-information
+           /ospf:router-capabilities-tlv:
+   +--ro router-functional-capabilities
+     +--ro functional-capability*   identityref
 
           ]]></artwork>
         </section>
@@ -489,11 +489,11 @@ module: ietf-ospf-unreachable-links
           <t>This document defines the initial version of the IANA-maintained YANG
              module for OSPF Router Functional Capabilities that mirrors the IANA "OSPF Router Functional Capability Bits"
              registry <xref target="IANA-OSPF-FC-Bits" format="default" sectionFormat="of" derivedContent="IANA-OSPF-FC-Bits"/>.</t>
-          <sourcecode name="iana-ospf-functional-cap-bits@2025-08-20.yang" type="" markers="true"><![CDATA[
+             <sourcecode name="iana-ospf-functional-cap-bits@2025-09-28.yang" type="" markers="true"><![CDATA[
 module iana-ospf-functional-cap-bits {
   yang-version 1.1;
-  namespace
-    "urn:ietf:params:xml:ns:yang:iana-ospf-functional-cap-bits";
+  namespace "urn:ietf:params:xml:ns:yang:
+             iana-ospf-functional-cap-bits";
   prefix iana-ospf-fc-bits;
 
   organization
@@ -536,7 +536,7 @@ module iana-ospf-functional-cap-bits {
      The latest version of this YANG module is available at
      https://www.iana.org/assignments/yang-parameters.";
 
-  revision 2025-08-20 {
+  revision 2025-09-28 {
     description
       "Initial version";
     reference
@@ -546,7 +546,7 @@ module iana-ospf-functional-cap-bits {
   identity functional-capability {
     description
       "Base identity for OSPF Router Functional Capabilities. The
-       functional capabilities are defined in IANA OSPF Router 
+       functional capabilities are defined in IANA OSPF Router
        Functional Capability Bits registry.";
   }
 
@@ -559,15 +559,16 @@ module iana-ospf-functional-cap-bits {
       "RFC XXXX: Advertising Unreachable Links in OSPF";
   }
 }
+             
           ]]></sourcecode>
         </section>
         <section title="YANG Module for OSPF Functional Capability">
           <t>The following is the YANG module for OSPF Functional Capability:</t>
-          <sourcecode name="ietf-ospf-functional-capability@2025-08-20.yang" type="" markers="true"><![CDATA[
+          <sourcecode name="ietf-ospf-functional-capability@2025-09-28.yang" type="" markers="true"><![CDATA[
 module ietf-ospf-functional-capability {
   yang-version 1.1;
-  namespace
-    "urn:ietf:params:xml:ns:yang:ietf-ospf-functional-capability";
+  namespace "urn:ietf:params:xml:ns:yang:
+             ietf-ospf-functional-capability";
   prefix ospf-fc;
 
   import ietf-routing {
@@ -626,7 +627,7 @@ module ietf-ospf-functional-capability {
      This version of this YANG module is part of RFC XXXX; see
      the RFC itself for full legal notices.";
 
-  revision 2025-08-20 {
+  revision 2025-09-28 {
     description
       "Initial version";
     reference
@@ -748,11 +749,11 @@ module ietf-ospf-functional-capability {
         </section>
         <section title="YANG Module for OSPF Advertising Unreachable Links">
           <t>The following is the YANG module for OSPF Advertising Unreachable Links:</t>
-          <sourcecode name="ietf-ospf-unreachable-links@2025-08-20.yang" type="" markers="true"><![CDATA[
+          <sourcecode name="ietf-ospf-unreachable-links@2025-09-28.yang" type="" markers="true"><![CDATA[
 module ietf-ospf-unreachable-links {
   yang-version 1.1;
-  namespace
-    "urn:ietf:params:xml:ns:yang:ietf-ospf-unreachable-links";
+  namespace "urn:ietf:params:xml:ns:yang:
+             ietf-ospf-unreachable-links";
   prefix ospf-unreach-link;
 
   import ietf-routing {
@@ -807,7 +808,7 @@ module ietf-ospf-unreachable-links {
      This version of this YANG module is part of RFC XXXX; see
      the RFC itself for full legal notices.";
 
-  revision 2025-08-20 {
+  revision 2025-09-28 {
     description
       "Initial version";
     reference
@@ -838,7 +839,7 @@ module ietf-ospf-unreachable-links {
     }
   }
 }
-        ]]></sourcecode>
+          ]]></sourcecode>
         </section>
       </section>
     </section>
@@ -936,7 +937,8 @@ Reference: RFC XXXX
 
 Name: ietf-ospf-functional-capability
 Maintained by IANA?  N
-Namespace: urn:ietf:params:xml:ns:yang:ietf-ospf-functional-capability
+Namespace: urn:ietf:params:xml:ns:yang:
+           ietf-ospf-functional-capability
 Prefix: ospf-fc
 Reference: RFC XXXX
 
@@ -963,7 +965,7 @@ Reference: RFC XXXX
              sub-statements defined:</t>
             <artwork>
   "base":          Contains 'functional-capability'.
-  
+
   "description":   Replicates the description from the registry.
 
   "reference":     Replicates the reference(s) from the registry with
