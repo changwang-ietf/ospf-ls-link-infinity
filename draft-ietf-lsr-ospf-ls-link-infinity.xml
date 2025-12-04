@@ -34,10 +34,10 @@ most I-Ds might want to use.
 <!-- keep one blank line between list items -->
 <!-- end of list of popular I-D processing instructions -->
 <rfc xmlns:xi="http://www.w3.org/2001/XInclude"
-     category="std" docName="draft-ietf-lsr-ospf-ls-link-infinity-11"
+     category="std" docName="draft-ietf-lsr-ospf-ls-link-infinity-12"
      ipr="trust200902"
      obsoletes=""
-     updates="6987, 8770"
+     updates="5443, 6987, 8770"
      submissionType="IETF"
      xml:lang="en"
      tocInclude="true"
@@ -56,7 +56,7 @@ most I-Ds might want to use.
 
   <front>
     <title abbrev="Advertising Unreachable Links in OSPF">Advertising Unreachable Links in OSPF</title>
-    <seriesInfo name="Internet-Draft" value="draft-ietf-lsr-ospf-ls-link-infinity-11"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-lsr-ospf-ls-link-infinity-12"/>
     <!-- add 'role="editor"' below for the editors if appropriate -->
 
     <!-- Another author who claims to be an editor -->
@@ -130,12 +130,21 @@ most I-Ds might want to use.
       </t>
       <t>
         Stub Router Advertisement (RFC 6987) defines MaxLinkMetric (0xffff)
-        to indicate a router-LSA link should not be used for transit
-        traffic. When an OSPFv2 router supports the Unreachable Link support
-        capability defined in this document, OSPFv2 Stub Router links are
+        to indicate a router-LSA link should not be used for transit IP
+        traffic. When an OSPF router supports the Unreachable Link support
+        capability defined in this document, OSPF Stub Router links are
         advertised as MaxReachableLinkMetric (0xfffe) rather than
-        MaxLinkMetric (0xffff). This document updates RFC 6987 and RFC 8770
+        MaxLinkMetric (0xffff).
+        This document updates RFC 6987 and RFC 8770
         with respect to the advertisement of MaxReachableLinkMetric rather than MaxLinkMetric.
+      </t>
+      <t>
+        Similarily, Label Distribution Protocol (LDP) IGP Synchronization (RFC5443)
+        specifies OSPF advertisement of MaxLinkMetric (0xffff) to indicate that while
+        the OSPF adjacency is in FULL state, LDP has not been synchronized between the two
+        neighbors and transit traffic is discouraged. This document updates RFC 5433
+        with respect to the advertisement of MaxReachableLinkMetric rather than
+        MaxLinkMetric.
       </t>
     </abstract>
   </front>
@@ -204,7 +213,7 @@ most I-Ds might want to use.
           the "Red" color.
         </t>
         <artwork align="center" name="Network Topology"><![CDATA[
-       ******
+     ******
     A------C------E
     |*     |*     |
     |*     |*     |        ******: "Red" link
@@ -217,7 +226,7 @@ most I-Ds might want to use.
         <t>
           Flex-Algorithm 128 is enabled on Nodes A, B, C, and D, with an EAG
           rule including "Red" and the Metric-Type is designated to be a type
-          other than the IGP metric. OSPF will compute routes for Flex-Algorithm
+          other than the OSPF metric. OSPF will compute routes for Flex-Algorithm
           128 using these links. The topology associated with Flex-Algorithm 128
           is shown in Figure 3.
         </t>
@@ -238,16 +247,16 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
           for clarity.
         </t>
         <t>
-          If the IGP metrics for all the "Red" links are advertised as
+          If the OSPF metrics for all the "Red" links are advertised as
           unreachable, they will be excluded from the default SPF calculation
           as shown in Figure 4, This allows the "Red" links from A to B and C to D
           to be used exclusively by the Flex-Algorithm 128 calculation.
         </t>
         <artwork align="center" name="Base SPF Topology Excluding Unreachable Links"><![CDATA[
                   A------C------E
-                  |      |      |
-                  |      |      |
-                  |      |      |
+                                |
+                                |
+                                |
                   B------D------F
 
   Figure 4: Base SPF Topology Excluding Unreachable Links]]>
@@ -255,15 +264,15 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
       </section>
     </section>
     <section anchor="Solution_based_on_LSLinkInfinity">
-      <name>LSLinkInfinity-Based Solution</name>
+      <name>LSLinkInfinity Based Solution</name>
     <section anchor="Unreachable_link">
       <name>Unreachable Link Advertisement</name>
       <t>
-        This document specifies that if the IGP metric of a link is
+        This document specifies that if the OSPF metric of a link is
         advertised as LSLinkInfinity (0xffff), it MUST NOT be considered
         during the associated SPF computation. This applies to both the
         Flex-Algorithm SPF and the base SPF as long as LSLinkInfinity is
-        specified for the IGP metric.
+        specified for the OSPF metric.
       </t>
       <t>
         While the interpretation of LSLinkInfinity is only required in the base
@@ -271,10 +280,10 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
         OSPF routers supporting this specification MUST consistently interpret
         LSLinkInfinity as unreachable during the associated SPF computation.
         This applies to both the Flex-Algorithm SPF and the base SPF as long
-        as LSLinkInfinity is specified for the IGP metric.
+        as LSLinkInfinity is specified for the OSPF metric.
       </t>
       <t>
-        An IGP metric with LSLinkInfinity indicating a link is unreachable is
+        An OSPF metric with LSLinkInfinity indicating a link is unreachable is
         applicable to the following TLVs/LSAs:
       </t>
       <ul spacing="normal">
@@ -299,7 +308,7 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
       <section anchor="Backward_Compatibility">
         <name>Unreachable Link Backward Compatibility</name>
         <t>
-          Prior to this specification, OSPF treated links advertised as
+          Prior to this specification, OSPF treated links with an advertised metric of
           LSLinkInfinity as reachable <xref target="RFC2328"/>. Hence, partial deployment of
           this specification may result in routing loops due to inconsistent
           interpretation of LSLinkInfinity. For example, in the network shown
@@ -364,19 +373,19 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
           traffic.
         </t>
         <t>
-          When an OSPFv2 router
+          When an OSPF router
           supports the Unreachable Link support capability defined in this
-          document, the OSPFv2 stub router MaxLinkMetric (0xffff) MUST be
+          document, the OSPF stub router MaxLinkMetric (0xffff) MUST be
           updated to MaxReachableLinkMetric (0xfffe).
           This document updates <xref target="RFC6987"/> and <xref target="RFC8770"/>
           with respect to the advertisement of MaxReachableLinkMetric rather than
           MaxLinkMetric.
         </t>
         <t>
-          When an OSPFv2 router supports <xref target="RFC6987"/> and the Unreachable Link
+          When an OSPF router supports <xref target="RFC6987"/> and the Unreachable Link
           support capability defined in this document, it MUST also support
           advertisement all its non-stub links with a link cost of MaxReachableLinkMetric (0xfffe).
-          Since MaxLinkMetric will not be used to indicate a link is unreachable unless all OSPFv2
+          Since MaxLinkMetric will not be used to indicate a link is unreachable unless all OSPF
           routers in the area support this specification as specified in
           <xref target="Backward_Compatibility"/>, all routers in the area will
           also support the usage of MaxReachableLinkMetric to discourage the usage of stub router
@@ -386,6 +395,24 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
           An OSPFv3 router can simply advertise R-bit in its router-LSA options <xref target="RFC5340"/>
           to prevent usage stub router links for transit traffic.  Similarly, OSPFv2 routers supporting
           <xref target="RFC8770"/> can advertise the H-bit in the router-LSA options.
+        </t>
+      </section>
+      <section anchor="LDP_IGP_SYNC_Backward_Compatibility">
+        <name>Label Distribution Protocol (LDP) IGP Synchronization Backward Compatibility</name>
+        <t>
+          LDP IGP Synchronization <xref target="RFC5443"/> specifies OSPF advertisement
+          of MaxLinkMetric (0xffff) to indicate that while the OSPF adjacency is in FULL state,
+          LDP has not been synchronized between the two neighbors and transit IP traffic
+          is discouraged. 
+          When an OSPF router supports the Unreachable Link support capability
+          defined in this document, the usage of OSPF MaxLinkMetric (0xffff) to discourage
+          usage of the link until LDP is "fully operational" MUST be updated to
+          MaxReachableLinkMetric (0xfffe). It is important to keep the link in the topology to
+          allow IP traffic to use the link as a last resort in case of LDP packets between
+          OSPF router loopbacks addresses or a network failure.
+          This document updates <xref target="RFC5443"/>
+          with respect to the advertisement of MaxReachableLinkMetric rather than
+          MaxLinkMetric. 
         </t>
       </section>
     </section>
@@ -1060,6 +1087,7 @@ Reference: RFC XXXX
     <references title="Informative References">
       <?rfc include="reference.RFC.4252.xml"?>
       <?rfc include="reference.RFC.5340.xml"?>
+      <?rfc include="reference.RFC.5443.xml"?>
       <?rfc include="reference.RFC.6987.xml"?>
       <?rfc include="reference.RFC.7308.xml"?>
       <?rfc include="reference.RFC.8340.xml"?>
