@@ -34,7 +34,7 @@ most I-Ds might want to use.
 <!-- keep one blank line between list items -->
 <!-- end of list of popular I-D processing instructions -->
 <rfc xmlns:xi="http://www.w3.org/2001/XInclude"
-     category="std" docName="draft-ietf-lsr-ospf-ls-link-infinity-12"
+     category="std" docName="draft-ietf-lsr-ospf-ls-link-infinity-13"
      ipr="trust200902"
      obsoletes=""
      updates="5443, 6987, 8770"
@@ -56,7 +56,7 @@ most I-Ds might want to use.
 
   <front>
     <title abbrev="Advertising Unreachable Links in OSPF">Advertising Unreachable Links in OSPF</title>
-    <seriesInfo name="Internet-Draft" value="draft-ietf-lsr-ospf-ls-link-infinity-12"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-lsr-ospf-ls-link-infinity-13"/>
     <!-- add 'role="editor"' below for the editors if appropriate -->
 
     <!-- Another author who claims to be an editor -->
@@ -460,39 +460,56 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
           <t>The following shows the tree diagram of the module for OSPF Functional Capability:</t>
           <artwork align="left" name="" type="" alt=""><![CDATA[
 module: ietf-ospf-functional-capability
- augment /rt:routing/rt:control-plane-protocols
-           /rt:control-plane-protocol/ospf:ospf/ospf:areas/ospf:area
-           /ospf:database/ospf:area-scope-lsa-type
-           /ospf:area-scope-lsas/ospf:area-scope-lsa/ospf:version
-           /ospf:ospfv2/ospf:ospfv2/ospf:body/ospf:opaque
-           /ospf:ri-opaque/ospf:router-capabilities-tlv:
-   +--ro router-functional-capabilities
-     +--ro functional-capability*   identityref
- augment /rt:routing/rt:control-plane-protocols
-           /rt:control-plane-protocol/ospf:ospf/ospf:database
-           /ospf:as-scope-lsa-type/ospf:as-scope-lsas
-           /ospf:as-scope-lsa/ospf:version/ospf:ospfv2/ospf:ospfv2
-           /ospf:body/ospf:opaque/ospf:ri-opaque
-           /ospf:router-capabilities-tlv:
-   +--ro router-functional-capabilities
-     +--ro functional-capability*   identityref
- augment /rt:routing/rt:control-plane-protocols
-           /rt:control-plane-protocol/ospf:ospf/ospf:database
-           /ospf:as-scope-lsa-type/ospf:as-scope-lsas
-           /ospf:as-scope-lsa/ospf:version/ospf:ospfv3/ospf:ospfv3
-           /ospf:body/ospf:router-information
-           /ospf:router-capabilities-tlv:
-   +--ro router-functional-capabilities
-     +--ro functional-capability*   identityref
- augment /rt:routing/rt:control-plane-protocols
-           /rt:control-plane-protocol/ospf:ospf/ospf:areas/ospf:area
-           /ospf:database/ospf:area-scope-lsa-type
-           /ospf:area-scope-lsas/ospf:area-scope-lsa/ospf:version
-           /ospf:ospfv3/ospf:ospfv3/ospf:body/ospf:router-information
-           /ospf:router-capabilities-tlv:
-   +--ro router-functional-capabilities
-     +--ro functional-capability*   identityref
-
+  augment /rt:routing/rt:control-plane-protocols
+            /rt:control-plane-protocol/ospf:ospf/ospf:areas
+            /ospf:area/ospf:interfaces/ospf:interface
+            /ospf:database/ospf:link-scope-lsa-type
+            /ospf:link-scope-lsas/ospf:link-scope-lsa/ospf:version
+            /ospf:ospfv2/ospf:ospfv2/ospf:body/ospf:opaque
+            /ospf:ri-opaque/ospf:router-capabilities-tlv:
+    +--ro router-functional-capabilities
+       +--ro functional-capability*   identityref
+  augment /rt:routing/rt:control-plane-protocols
+            /rt:control-plane-protocol/ospf:ospf/ospf:areas
+            /ospf:area/ospf:database/ospf:area-scope-lsa-type
+            /ospf:area-scope-lsas/ospf:area-scope-lsa/ospf:version
+            /ospf:ospfv2/ospf:ospfv2/ospf:body/ospf:opaque
+            /ospf:ri-opaque/ospf:router-capabilities-tlv:
+    +--ro router-functional-capabilities
+       +--ro functional-capability*   identityref
+  augment /rt:routing/rt:control-plane-protocols
+            /rt:control-plane-protocol/ospf:ospf/ospf:database
+            /ospf:as-scope-lsa-type/ospf:as-scope-lsas
+            /ospf:as-scope-lsa/ospf:version/ospf:ospfv2
+            /ospf:ospfv2/ospf:body/ospf:opaque/ospf:ri-opaque
+            /ospf:router-capabilities-tlv:
+    +--ro router-functional-capabilities
+       +--ro functional-capability*   identityref
+  augment /rt:routing/rt:control-plane-protocols
+            /rt:control-plane-protocol/ospf:ospf/ospf:areas
+            /ospf:area/ospf:interfaces/ospf:interface
+            /ospf:database/ospf:link-scope-lsa-type
+            /ospf:link-scope-lsas/ospf:link-scope-lsa/ospf:version
+            /ospf:ospfv3/ospf:ospfv3/ospf:body
+            /ospf:router-information/ospf:router-capabilities-tlv:
+    +--ro router-functional-capabilities
+       +--ro functional-capability*   identityref
+  augment /rt:routing/rt:control-plane-protocols
+            /rt:control-plane-protocol/ospf:ospf/ospf:database
+            /ospf:as-scope-lsa-type/ospf:as-scope-lsas
+            /ospf:as-scope-lsa/ospf:version/ospf:ospfv3
+            /ospf:ospfv3/ospf:body/ospf:router-information
+            /ospf:router-capabilities-tlv:
+    +--ro router-functional-capabilities
+       +--ro functional-capability*   identityref
+  augment /rt:routing/rt:control-plane-protocols
+            /rt:control-plane-protocol/ospf:ospf/ospf:areas
+            /ospf:area/ospf:database/ospf:area-scope-lsa-type
+            /ospf:area-scope-lsas/ospf:area-scope-lsa/ospf:version
+            /ospf:ospfv3/ospf:ospfv3/ospf:body
+            /ospf:router-information/ospf:router-capabilities-tlv:
+    +--ro router-functional-capabilities
+       +--ro functional-capability*   identityref
           ]]></artwork>
         </section>
         <section title="Tree for OSPF Advertising Unreachable Links">
@@ -590,7 +607,7 @@ module iana-ospf-functional-cap-bits {
         </section>
         <section title="YANG Module for OSPF Functional Capability">
           <t>The following is the YANG module for OSPF Functional Capability:</t>
-          <sourcecode name="ietf-ospf-functional-capability@2025-09-28.yang" type="" markers="true"><![CDATA[
+          <sourcecode name="ietf-ospf-functional-capability@2025-12-04.yang" type="" markers="true"><![CDATA[
 module ietf-ospf-functional-capability {
   yang-version 1.1;
   namespace "urn:ietf:params:xml:ns:yang:"
@@ -638,7 +655,6 @@ module ietf-ospf-functional-capability {
 
      Copyright (c) 2025 IETF Trust and the persons identified as
      authors of the code.  All rights reserved.
-
      Redistribution and use in source and binary forms, with or
      without modification, is permitted pursuant to, and subject
      to the license terms contained in, the Revised BSD License
@@ -653,7 +669,7 @@ module ietf-ospf-functional-capability {
      This version of this YANG module is part of RFC XXXX; see
      the RFC itself for full legal notices.";
 
-  revision 2025-09-28 {
+  revision 2025-12-04 {
     description
       "Initial version";
     reference
@@ -679,6 +695,29 @@ module ietf-ospf-functional-capability {
       description
         "OSPF Router Functional identity definitions.";
     }
+  }
+
+  augment "/rt:routing/"
+        + "rt:control-plane-protocols/rt:control-plane-protocol/"
+        + "ospf:ospf/ospf:areas/ospf:area/"
+        + "ospf:interfaces/ospf:interface/ospf:database/"
+        + "ospf:link-scope-lsa-type/ospf:link-scope-lsas/"
+        + "ospf:link-scope-lsa/ospf:version/ospf:ospfv2/"
+        + "ospf:ospfv2/ospf:body/ospf:opaque/ospf:ri-opaque/"
+        + "ospf:router-capabilities-tlv" {
+    when "derived-from-or-self(/rt:routing/"
+       + "rt:control-plane-protocols/"
+       + "rt:control-plane-protocol/rt:type, 'ospf:ospfv2')" {
+      description
+        "This augmentation is only valid for OSPFv2.";
+    }
+    description
+      "OSPFv2 Opaque Link-Scoped Router-Information LSA Router
+       Functional capabilities.";
+    uses router-functional-capabilities;
+    reference
+      "RFC 7770: Extensions to OSPF for Advertising Optional
+                 Router Capabilities";
   }
 
   augment "/rt:routing/"
@@ -719,6 +758,29 @@ module ietf-ospf-functional-capability {
     }
     description
       "OSPFv2 Opaque AS-Scoped Router-Information LSA Router
+       Functional capabilities.";
+    uses router-functional-capabilities;
+    reference
+      "RFC 7770: Extensions to OSPF for Advertising Optional
+                 Router Capabilities";
+  }
+
+  augment "/rt:routing/"
+        + "rt:control-plane-protocols/rt:control-plane-protocol/"
+        + "ospf:ospf/ospf:areas/ospf:area/"
+        + "ospf:interfaces/ospf:interface/ospf:database/"
+        + "ospf:link-scope-lsa-type/ospf:link-scope-lsas/"
+        + "ospf:link-scope-lsa/ospf:version/ospf:ospfv3/"
+        + "ospf:ospfv3/ospf:body/ospf:router-information/"
+        + "ospf:router-capabilities-tlv" {
+    when "derived-from-or-self(/rt:routing/"
+       + "rt:control-plane-protocols/"
+       + "rt:control-plane-protocol/rt:type, 'ospf:ospfv3')" {
+      description
+        "This augmentation is only valid for OSPFv3.";
+    }
+    description
+      "OSPFv3 Link-Scoped Router-Information LSA Router
        Functional capabilities.";
     uses router-functional-capabilities;
     reference
