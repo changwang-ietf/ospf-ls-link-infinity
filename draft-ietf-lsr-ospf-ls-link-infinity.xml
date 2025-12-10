@@ -34,7 +34,7 @@ most I-Ds might want to use.
 <!-- keep one blank line between list items -->
 <!-- end of list of popular I-D processing instructions -->
 <rfc xmlns:xi="http://www.w3.org/2001/XInclude"
-     category="std" docName="draft-ietf-lsr-ospf-ls-link-infinity-13"
+     category="std" docName="draft-ietf-lsr-ospf-ls-link-infinity-14"
      ipr="trust200902"
      obsoletes=""
      updates="5443, 6987, 8770"
@@ -56,7 +56,7 @@ most I-Ds might want to use.
 
   <front>
     <title abbrev="Advertising Unreachable Links in OSPF">Advertising Unreachable Links in OSPF</title>
-    <seriesInfo name="Internet-Draft" value="draft-ietf-lsr-ospf-ls-link-infinity-13"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-lsr-ospf-ls-link-infinity-14"/>
     <!-- add 'role="editor"' below for the editors if appropriate -->
 
     <!-- Another author who claims to be an editor -->
@@ -127,24 +127,15 @@ most I-Ds might want to use.
         In order to advertise these links and not use them in the base SPF
         calculation, the metric LSLinkInfinity (0xffff) is used to specify
         that the link is unreachable.
+        to be used 
       </t>
       <t>
-        Stub Router Advertisement (RFC 6987) defines MaxLinkMetric (0xffff)
-        to indicate a router-LSA link should not be used for transit IP
-        traffic. When an OSPF router supports the Unreachable Link support
-        capability defined in this document, OSPF Stub Router links are
-        advertised as MaxReachableLinkMetric (0xfffe) rather than
-        MaxLinkMetric (0xffff).
-        This document updates RFC 6987 and RFC 8770
-        with respect to the advertisement of MaxReachableLinkMetric rather than MaxLinkMetric.
-      </t>
-      <t>
-        Similarily, Label Distribution Protocol (LDP) IGP Synchronization (RFC5443)
-        specifies OSPF advertisement of MaxLinkMetric (0xffff) to indicate that while
-        the OSPF adjacency is in FULL state, LDP has not been synchronized between the two
-        neighbors and transit traffic is discouraged. This document updates RFC 5433
-        with respect to the advertisement of MaxReachableLinkMetric rather than
-        MaxLinkMetric.
+        MaxReachableLinkMetric (0xfffe) is defined to provide backward compatible
+        reachability in specifications that previously specified advertisement
+        of MaxLinkMetric (0xffff).
+        This document updates RFC 5443, RFC 6987, and RFC 8770
+        with respect to the advertisement of MaxReachableLinkMetric (0xfffe)
+        rather than MaxLinkMetric (0xffff).
       </t>
     </abstract>
   </front>
@@ -166,6 +157,24 @@ most I-Ds might want to use.
         that the link is unreachable and OSPF routers supporting this
         specification will exclude the link from SPF calculations (subject to
         backward-compatibility constraints, refer to <xref target="Backward_Compatibility"/>).
+      </t>
+      <t>
+        Stub Router Advertisement <xref target="RFC6987"/> defines MaxLinkMetric (0xffff)
+        to indicate a router-LSA link should not be used for transit IP
+        traffic. When an OSPF router supports the Unreachable Link support
+        capability defined in this document, OSPF Stub Router links are
+        advertised as MaxReachableLinkMetric (0xfffe) rather than
+        MaxLinkMetric (0xffff).
+        This document updates <xref target="RFC6987"/> and <xref target="RFC8770"/>
+        with respect to the advertisement of MaxReachableLinkMetric rather than MaxLinkMetric.
+      </t>
+      <t>
+        Similarily, Label Distribution Protocol (LDP) IGP Synchronization
+        <xref target="RFC5443"/> specifies OSPF advertisement of MaxLinkMetric (0xffff)
+        to indicate that while the OSPF adjacency is in FULL state, LDP has not been
+        synchronized between the two neighbors and transit traffic is discouraged. This document
+        updates <xref target="RFC5443"/>  with respect to the advertisement of MaxReachableLinkMetric
+        rather than MaxLinkMetric.
       </t>
       <section anchor="Requirements_Language">
         <name>Requirements Language</name>
@@ -990,7 +999,7 @@ module ietf-ospf-unreachable-links {
             </thead>
             <tbody>
               <tr>
-                <td>0(TBD)</td>
+                <td>TBD</td>
                 <td>Unreachable Link support</td>
                 <td>This document</td>
               </tr>
