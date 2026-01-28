@@ -34,7 +34,7 @@ most I-Ds might want to use.
 <!-- keep one blank line between list items -->
 <!-- end of list of popular I-D processing instructions -->
 <rfc xmlns:xi="http://www.w3.org/2001/XInclude"
-     category="std" docName="draft-ietf-lsr-ospf-ls-link-infinity-14"
+     category="std" docName="draft-ietf-lsr-ospf-ls-link-infinity-16"
      ipr="trust200902"
      obsoletes=""
      updates="5443, 6987, 8770"
@@ -56,7 +56,7 @@ most I-Ds might want to use.
 
   <front>
     <title abbrev="Advertising Unreachable Links in OSPF">Advertising Unreachable Links in OSPF</title>
-    <seriesInfo name="Internet-Draft" value="draft-ietf-lsr-ospf-ls-link-infinity-14"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-lsr-ospf-ls-link-infinity-16"/>
     <!-- add 'role="editor"' below for the editors if appropriate -->
 
     <!-- Another author who claims to be an editor -->
@@ -111,7 +111,7 @@ most I-Ds might want to use.
         <!-- uri and facsimile elements may also be added -->
       </address>
     </author>
-    <date year="2025"/>
+    <date year="2026"/>
     <!-- Meta-data Declarations -->
 
     <area>General</area>
@@ -127,7 +127,6 @@ most I-Ds might want to use.
         In order to advertise these links and not use them in the base SPF
         calculation, the metric LSLinkInfinity (0xffff) is used to specify
         that the link is unreachable.
-        to be used 
       </t>
       <t>
         MaxReachableLinkMetric (0xfffe) is defined to provide backward compatible
@@ -398,7 +397,10 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
           routers in the area support this specification as specified in
           <xref target="Backward_Compatibility"/>, all routers in the area will
           also support the usage of MaxReachableLinkMetric to discourage the usage of stub router
-          links for transit traffic.
+          links for transit traffic. If there are any OSPF routers in the area that do not support
+          the Unreachable Link support capability, then all OSPF routers in the area will
+          treat links advertised with a cost MaxLinkMetric as reachable
+          (<xref target="Backward_Compatibility"/>).
         </t>
         <t>
           An OSPFv3 router can simply advertise R-bit in its router-LSA options <xref target="RFC5340"/>
@@ -412,7 +414,7 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
           LDP IGP Synchronization <xref target="RFC5443"/> specifies OSPF advertisement
           of MaxLinkMetric (0xffff) to indicate that while the OSPF adjacency is in FULL state,
           LDP has not been synchronized between the two neighbors and transit IP traffic
-          is discouraged. 
+          is discouraged.
           When an OSPF router supports the Unreachable Link support capability
           defined in this document, the usage of OSPF MaxLinkMetric (0xffff) to discourage
           usage of the link until LDP is "fully operational" MUST be updated to
@@ -421,7 +423,7 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
           OSPF router loopbacks addresses or a network failure.
           This document updates <xref target="RFC5443"/>
           with respect to the advertisement of MaxReachableLinkMetric rather than
-          MaxLinkMetric. 
+          MaxLinkMetric.
         </t>
       </section>
     </section>
@@ -444,7 +446,10 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
         <t>
           It is also RECOMMENDED that implementations supporting this document
           and auto-costing limit the maximum computed cost to
-          MaxReachableLinkMetric (0xfffe).
+          MaxReachableLinkMetric (0xfffe). An example of auto-costing would be
+          to automatically set the link metric to be inversely proporational
+          to the link bandwidth (refer to the auto-cost feature in the
+          ietf-ospf.yang <xref target="RFC9129"/>).
         </t>
       </section>
       <section title="YANG Data Model">
@@ -568,7 +573,7 @@ module iana-ospf-functional-cap-bits {
      This YANG module is maintained by IANA and reflects the 'OSPF
      Router Functional Capability Bits' registry.
 
-     Copyright (c) 2025 IETF Trust and the persons identified as
+     Copyright (c) 2026 IETF Trust and the persons identified as
      authors of the code.  All rights reserved.
 
      Redistribution and use in source and binary forms, with or
@@ -589,7 +594,7 @@ module iana-ospf-functional-cap-bits {
      The latest version of this YANG module is available at
      https://www.iana.org/assignments/yang-parameters.";
 
-  revision 2025-09-28 {
+  revision 2026-01-28 {
     description
       "Initial version";
     reference
@@ -662,7 +667,7 @@ module ietf-ospf-functional-capability {
     "This YANG module defines the operational state for
      Functional Capability in OSPF as defined in RFC 7770.
 
-     Copyright (c) 2025 IETF Trust and the persons identified as
+     Copyright (c) 2026 IETF Trust and the persons identified as
      authors of the code.  All rights reserved.
      Redistribution and use in source and binary forms, with or
      without modification, is permitted pursuant to, and subject
@@ -678,7 +683,7 @@ module ietf-ospf-functional-capability {
      This version of this YANG module is part of RFC XXXX; see
      the RFC itself for full legal notices.";
 
-  revision 2025-12-04 {
+  revision 2026-01-28 {
     description
       "Initial version";
     reference
@@ -889,7 +894,7 @@ module ietf-ospf-unreachable-links {
      state for Advertising Unreachable Links in OSPF as defined
      in RFC XXXX.
 
-     Copyright (c) 2025 IETF Trust and the persons identified as
+     Copyright (c) 2026 IETF Trust and the persons identified as
      authors of the code.  All rights reserved.
 
      Redistribution and use in source and binary forms, with or
@@ -906,7 +911,7 @@ module ietf-ospf-unreachable-links {
      This version of this YANG module is part of RFC XXXX; see
      the RFC itself for full legal notices.";
 
-  revision 2025-09-28 {
+  revision 2026-01-28 {
     description
       "Initial version";
     reference
@@ -944,9 +949,17 @@ module ietf-ospf-unreachable-links {
     <section anchor="Security_Considerations">
       <name>Security Considerations</name>
       <t>
-        The document does not introduce any new security issues for the OSPF
-        protocol. The security considerations for <xref target="RFC2328"/>,<xref target="RFC5340"/>,
-        <xref target="RFC6987"/>, and <xref target="RFC7770"/> are applicable to protocol extension.
+        A compromised OSPF router could advertise changes to its Unreachable Link
+        support capability rapidly resulting in repeated route recalculations
+        on routers in the area supporting this specification
+        (<xref target="Backward_Compatibility"/>).
+        Hence, it is RECOMMENDED that routers supporting this specification also
+        support the SPF back-off delay algorithm described in <xref target="RFC8405"/>.
+      </t>
+      <t>
+        The security considerations for <xref target="RFC2328"/>,<xref target="RFC5340"/>,
+        <xref target="RFC6987"/>, and <xref target="RFC7770"/> are also applicable to this
+        protocol extension.
       </t>
       <t>
         The ietf-ospf-unreachable-links YANG module and the ietf-ospf-functional-capability YANG module
@@ -1114,6 +1127,7 @@ Reference: RFC XXXX
 <section title="Acknowledgments">
   <t>Thanks to Yingzhen Qu for providing the YANG model.</t>
   <t>Thanks to Dhruv Dhody for OPS Directorate review and comments.</t>
+  <t>Thanks to Gunter van de Velde for review and comments.</t>
 </section>
 </middle>
 <!--  *****BACK MATTER ***** -->
@@ -1152,6 +1166,7 @@ Reference: RFC XXXX
       <?rfc include="reference.RFC.8174.xml"?>
       <?rfc include="reference.RFC.8341.xml"?>
       <?rfc include="reference.RFC.8349.xml"?>
+      <?rfc include="reference.RFC.8405.xml"?>
       <?rfc include="reference.RFC.8362.xml"?>
       <?rfc include="reference.RFC.9129.xml"?>
     </references>
