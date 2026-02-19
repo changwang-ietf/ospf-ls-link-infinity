@@ -34,7 +34,7 @@ most I-Ds might want to use.
 <!-- keep one blank line between list items -->
 <!-- end of list of popular I-D processing instructions -->
 <rfc xmlns:xi="http://www.w3.org/2001/XInclude"
-     category="std" docName="draft-ietf-lsr-ospf-ls-link-infinity-17"
+     category="std" docName="draft-ietf-lsr-ospf-ls-link-infinity-19"
      ipr="trust200902"
      obsoletes=""
      updates="5443, 6987, 8770"
@@ -56,7 +56,7 @@ most I-Ds might want to use.
 
   <front>
     <title abbrev="Advertising Unreachable Links in OSPF">Advertising Unreachable Links in OSPF</title>
-    <seriesInfo name="Internet-Draft" value="draft-ietf-lsr-ospf-ls-link-infinity-17"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-lsr-ospf-ls-link-infinity-19"/>
     <!-- add 'role="editor"' below for the editors if appropriate -->
 
     <!-- Another author who claims to be an editor -->
@@ -121,9 +121,11 @@ most I-Ds might want to use.
     <keyword>ls</keyword>
     <abstract>
       <t>
-	In certain scenarios, it is necessary to advertise OSPF links that
-        are not applicable to the default SPF (Shortest Path First) calculation
-        for other purposes.
+        OSPF Router Link State Advertisements (LSAs) use fixed-format encodings
+        that always include advertised links in the default SPF (Shortest Path
+        First) computation. For non-default SPF computations, e.g., flexible
+        algorithms as described in RFC 9350, advertised OSPF links are
+        used in the default SPF computation even if this is not intended.
         In order to advertise these links and not use them in the base SPF
         calculation, the metric LSLinkInfinity (0xffff) is used to specify
         that the link is unreachable.
@@ -142,10 +144,10 @@ most I-Ds might want to use.
     <section anchor="Introduction">
       <name>Introduction</name>
       <t>
-	In certain scenarios, it is necessary to advertise OSPF links that
-        are not applicable to the default SPF calculation for other
-        purposes. For example, a link may be available for
-        Traffic Engineering (TE) purposes but not suitable for hop-by-hop
+        OSPF Router Link State Advertisements (LSAs) use fixed-format encodings
+        that always include advertised links in the default SPF (Shortest Path
+        First) computation. For example, a link may be required for
+        Traffic Engineering (TE) paths but not intended for hop-by-hop
         routing. Another example is an OSPF link used exclusively by a
         Flexible Algorithm <xref target="RFC9350"/> but
         excluded from the default algorithm.
@@ -168,7 +170,7 @@ most I-Ds might want to use.
         with respect to the advertisement of MaxReachableLinkMetric rather than MaxLinkMetric.
       </t>
       <t>
-        Similarily, Label Distribution Protocol (LDP) IGP Synchronization
+        Similarly, Label Distribution Protocol (LDP) IGP Synchronization
         <xref target="RFC5443"/> specifies OSPF advertisement of MaxLinkMetric (0xffff)
         to indicate that while the OSPF adjacency is in FULL state, LDP has not been
         synchronized between the two neighbors and transit traffic is discouraged. This document
@@ -356,14 +358,15 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
           </thead>
           <tbody>
             <tr>
-              <td>TBA</td>
+              <td>TBD</td>
               <td>Unreachable Link support</td>
             </tr>
           </tbody>
         </table>
         <t>
           OSPF Routers MUST NOT treat links with an advertised metric of
-          LSLinkInfinity as unreachable unless all routers in the OSPF area
+          LSLinkInfinity as unreachable unless all routers in the OSPF area,
+          i.e., all routers with Router-LSAs in the area Link State Database (LSDB),
           have advertised this capability. If all OSPF Routers in the area
           have advertised this capability, then links with an advertised
           metric of LSLinkInfinity MUST be treated as unreachable. Upon
@@ -438,7 +441,7 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
           In some networks, the operator may still want links with maximum
           metric (0xffff) to be treated as reachable. For example, when the cost
           of links is automatically computed based on the inverse of the link's
-          bandwidth and and there is a mix of low-speed and high-speed links, the
+          bandwidth and there is a mix of low-speed and high-speed links, the
           computation may result in the maximum metric. In this case, OSPF routers
           supporting this specification can disable the Unreachable Link support
           capability and still treat links with maximum metric as reachable.
@@ -447,7 +450,7 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
           It is also RECOMMENDED that implementations supporting this document
           and auto-costing limit the maximum computed cost to
           MaxReachableLinkMetric (0xfffe). An example of auto-costing would be
-          to automatically set the link metric to be inversely proporational
+          to automatically set the link metric to be inversely proportional
           to the link bandwidth (refer to the auto-cost feature in the
           ietf-ospf.yang <xref target="RFC9129"/>).
         </t>
@@ -934,7 +937,7 @@ module ietf-ospf-unreachable-links {
         default "false";
         description
           "Controls advertisement of unreachable links.
-           It is enabled when set to true and desabled
+           It is enabled when set to true and disabled
            when set to false.";
       }
       description
@@ -979,8 +982,8 @@ module ietf-ospf-unreachable-links {
       <t>
         The following data nodes defined in the ietf-ospf-unreachable-links YANG module that are
         writable/creatable/deletable (i.e., config true, which is the default).
-        The modifications to these data nodes without proper protection can
-        have prevent interpreting the OSPF LSLinkInfinity metric as unreachable.
+        The modification of these data nodes without proper protection can
+        prevent interpretation of the OSPF LSLinkInfinity metric as unreachable.
       </t>
       <ul empty="true" spacing="normal">
         <li>/ospf:ospf/ospf-unreach-link:unreachable-link-advertisement/ospf-unreach-link:enabled</li>

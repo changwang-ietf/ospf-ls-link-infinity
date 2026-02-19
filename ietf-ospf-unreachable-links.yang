@@ -79,7 +79,7 @@ module ietf-ospf-unreachable-links {
         default "false";
         description
           "Controls advertisement of unreachable links.
-           It is enabled when set to true and desabled
+           It is enabled when set to true and disabled
            when set to false.";
       }
       description
