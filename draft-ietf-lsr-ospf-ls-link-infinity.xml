@@ -34,7 +34,7 @@ most I-Ds might want to use.
 <!-- keep one blank line between list items -->
 <!-- end of list of popular I-D processing instructions -->
 <rfc xmlns:xi="http://www.w3.org/2001/XInclude"
-     category="std" docName="draft-ietf-lsr-ospf-ls-link-infinity-19"
+     category="std" docName="draft-ietf-lsr-ospf-ls-link-infinity-21"
      ipr="trust200902"
      obsoletes=""
      updates="5443, 6987, 8770"
@@ -56,7 +56,7 @@ most I-Ds might want to use.
 
   <front>
     <title abbrev="Advertising Unreachable Links in OSPF">Advertising Unreachable Links in OSPF</title>
-    <seriesInfo name="Internet-Draft" value="draft-ietf-lsr-ospf-ls-link-infinity-19"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-lsr-ospf-ls-link-infinity-21"/>
     <!-- add 'role="editor"' below for the editors if appropriate -->
 
     <!-- Another author who claims to be an editor -->
@@ -281,7 +281,7 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
         This document specifies that if the OSPF metric of a link is
         advertised as LSLinkInfinity (0xffff), it MUST NOT be considered
         during the associated SPF computation. This applies to both the
-        Flex-Algorithm SPF and the base SPF as long as LSLinkInfinity is
+        Flex-Algorithm SPF <xref target="RFC9350"/>  and the base SPF as long as LSLinkInfinity is
         specified for the OSPF metric.
       </t>
       <t>
@@ -289,8 +289,8 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
         topology as other topologies are optional <xref target="RFC4915"/>,
         OSPF routers supporting this specification MUST consistently interpret
         LSLinkInfinity as unreachable during the associated SPF computation.
-        This applies to both the Flex-Algorithm SPF and the base SPF as long
-        as LSLinkInfinity is specified for the OSPF metric.
+        This applies to both the Flex-Algorithm SPF <xref target="RFC9350"/>
+        and the base SPF as long as LSLinkInfinity is specified for the OSPF metric.
       </t>
       <t>
         An OSPF metric with LSLinkInfinity indicating a link is unreachable is
@@ -456,14 +456,9 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
         </t>
       </section>
       <section title="YANG Data Model">
-        <t>
-          YANG <xref target="RFC7950"></xref> is a data definition language
-          used to define the contents of a conceptual data store
-          that allows networked devices to be managed using NETCONF
-          <xref target="RFC6241"/> or RESTCONF <xref target="RFC8040"/>.
-        </t>
-        <t>
-          This section defines three YANG modules. Module iana-ospf-functional-cap-bits defines
+      <t>
+          This section defines three YANG <xref target="RFC7950"/> modules.
+          Module iana-ospf-functional-cap-bits defines
           the identities for OSPF Functional Capabilities as per the "OSPF Router Functional Capability Bits"
           IANA registry <xref target="IANA-OSPF-FC-Bits" format="default" sectionFormat="of" derivedContent="IANA-OSPF-FC-Bits"/>.
           Module ietf-ospf-functional-capability and module ietf-ospf-unreachable-links
@@ -541,16 +536,37 @@ module: ietf-ospf-unreachable-links
           ]]></artwork>
         </section>
         <section title="IANA Module for OSPF Functional Capability Bits">
-          <t>IANA has created a registry titled "OSPF Router Functional Capability Bits"
-             under the "Open Shortest Path First (OSPF) Parameters" registry group to
-             identify OSPF Router Functional Capabilities. Module iana-ospf-functional-cap-bits
-             is an IANA-maintained module, which defines the identities for the OSPF Functional Capabilities
-             as in the IANA "OSPF Router Functional Capability Bits" registry.</t>
-          <t>This module is maintained by IANA and will be updated if and when there is any change to the registry.</t>
-          <t>This document defines the initial version of the IANA-maintained YANG
-             module for OSPF Router Functional Capabilities that mirrors the IANA "OSPF Router Functional Capability Bits"
-             registry <xref target="IANA-OSPF-FC-Bits" format="default" sectionFormat="of" derivedContent="IANA-OSPF-FC-Bits"/>.</t>
-             <sourcecode name="iana-ospf-functional-cap-bits@2026-01-28.yang" type="" markers="true"><![CDATA[
+          <t>
+            IANA has created a registry titled "OSPF Router Functional Capability Bits"
+            under the "Open Shortest Path First (OSPF) Parameters" registry group to
+            identify OSPF Router Functional Capabilities. Module iana-ospf-functional-cap-bits
+            is an IANA-maintained module, which defines the identities for the OSPF Functional Capabilities
+            as in the IANA "OSPF Router Functional Capability Bits" registry.
+          </t>
+          <t>
+            This module is maintained by IANA and will be updated if and when there is any change to the registry.
+          </t>
+          <t>
+            This document defines the initial version of the IANA-maintained YANG
+            module for OSPF Router Functional Capabilities that mirrors the IANA
+            "OSPF Router Functional Capability Bits" registry
+            <xref target="IANA-OSPF-FC-Bits" format="default" sectionFormat="of"
+                  derivedContent="IANA-OSPF-FC-Bits"/>.
+            The latest version of this YANG module is available at
+            https://www.iana.org/assignments/iana-ospf-functional-cap-bits/iana-ospf-functional-cap-bits.xhtml.
+          </t>
+          <t>
+            Note to the RFC Editor: Please remove this module in the version to be
+            published as RFC.
+          </t>  
+          <t>
+            This document defines the initial version of the IANA-maintained YANG
+            module for OSPF Router Functional Capabilities that mirrors
+            the IANA "OSPF Router Functional Capability Bits"
+            registry <xref target="IANA-OSPF-FC-Bits" format="default" sectionFormat="of"
+            derivedContent="IANA-OSPF-FC-Bits"/>.
+          </t>
+           <sourcecode name="iana-ospf-functional-cap-bits@2026-01-28.yang" type="" markers="true"><![CDATA[
 module iana-ospf-functional-cap-bits {
   yang-version 1.1;
   namespace "urn:ietf:params:xml:ns:yang:"
@@ -1074,33 +1090,21 @@ Reference: RFC XXXX
           </blockquote>
           <t>When a value is added to the "OSPF Router Functional Capability Bits" registry, a new
              "identity" statement needs to be added to the "iana-ospf-functional-cap-bits" YANG
-             module. The name of the "identity" MUST be the name as provided in
-             the registry. The "identity" statement should have the following
+             module.  The name of the "identity" is the lower-case name provided in the registry
+             with all spaces replaced  with “-“. The "identity" statement should have the following
              sub-statements defined:</t>
             <artwork>
   "base":          Contains 'functional-capability'.
 
-  "description":   Replicates the description from the registry.
-
+  "description":   Contains the non-abbreviated OSPF capability bit
+                   name from the registry.
+  
   "reference":     Replicates the reference(s) from the registry with
                    the title of the document(s) added.
             </artwork>
-            <t>When the "iana-ospf-functional-cap-bits" YANG module is updated, a new "revision"
-               statement with a unique revision date must be added in front of the
-               existing revision statements.  The "revision" statement MUST contain
-               both "description" and "reference" substatements as follows.</t>
-            <t>The "description" substatement captures what changed in the
-               revised version. Typically, the description enumerates the changes
-               such as udpates to existing entries (e.g., update a description or
-               a reference) or notes which identities were added or had their status
-               changed (e.g., deprecated, discouraged, or obsoleted).</t>
-            <t>The "reference" substatement points specifically to the published
-               module (i.e., IANA_FOO_URL_With_REV). It may also point to an
-               authoritative event triggering the update to the YANG module. In all
-               cases, this event is cited from the underlying IANA registry. If the
-               update is triggered by an RFC, that RFC must also be included in
-               the "reference" substatement.</t>
-            <t>IANA is requested to add this note to <xref target="IANA-OSPF-FC-Bits" format="default" sectionFormat="of" derivedContent="IANA-OSPF-FC-Bits"/>:</t>
+            <t>IANA is requested to add this note to
+            <xref target="IANA-OSPF-FC-Bits" format="default" sectionFormat="of"
+                  derivedContent="IANA-OSPF-FC-Bits"/>:</t>
             <blockquote>
               <t>When this registry is modified, the YANG module "iana-ospf-functional-cap-bits"
                  must be updated as defined in RFC XXXX.</t>
@@ -1131,6 +1135,7 @@ Reference: RFC XXXX
   <t>Thanks to Yingzhen Qu for providing the YANG model.</t>
   <t>Thanks to Dhruv Dhody for OPS Directorate review and comments.</t>
   <t>Thanks to Gunter van de Velde for review and comments.</t>
+  <t>Thanks to Mohamed Boucadair for review and comments.</t>
 </section>
 </middle>
 <!--  *****BACK MATTER ***** -->
@@ -1160,30 +1165,30 @@ Reference: RFC XXXX
       <?rfc include="reference.RFC.2328.xml"?>
       <?rfc include="reference.RFC.3688.xml"?>
       <?rfc include="reference.RFC.4915.xml"?>
+      <?rfc include="reference.RFC.5443.xml"?>
       <?rfc include="reference.RFC.6020.xml"?>
-      <?rfc include="reference.RFC.6241.xml"?>
+      <?rfc include="reference.RFC.6987.xml"?>
       <?rfc include="reference.RFC.7684.xml"?>
       <?rfc include="reference.RFC.7770.xml"?>
       <?rfc include="reference.RFC.7950.xml"?>
-      <?rfc include="reference.RFC.8040.xml"?>
       <?rfc include="reference.RFC.8174.xml"?>
       <?rfc include="reference.RFC.8341.xml"?>
       <?rfc include="reference.RFC.8349.xml"?>
       <?rfc include="reference.RFC.8405.xml"?>
       <?rfc include="reference.RFC.8362.xml"?>
+      <?rfc include="reference.RFC.8770.xml"?>
       <?rfc include="reference.RFC.9129.xml"?>
+      <?rfc include="reference.RFC.9350.xml"?>
     </references>
     <references title="Informative References">
       <?rfc include="reference.RFC.4252.xml"?>
       <?rfc include="reference.RFC.5340.xml"?>
-      <?rfc include="reference.RFC.5443.xml"?>
-      <?rfc include="reference.RFC.6987.xml"?>
+      <?rfc include="reference.RFC.6241.xml"?>
       <?rfc include="reference.RFC.7308.xml"?>
+      <?rfc include="reference.RFC.8040.xml"?>
       <?rfc include="reference.RFC.8340.xml"?>
       <?rfc include="reference.RFC.8446.xml"?>
-      <?rfc include="reference.RFC.8770.xml"?>
       <?rfc include="reference.RFC.9000.xml"?>
-      <?rfc include="reference.RFC.9350.xml"?>
     </references>
   </references>
 </back>
