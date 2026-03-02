@@ -34,7 +34,7 @@ most I-Ds might want to use.
 <!-- keep one blank line between list items -->
 <!-- end of list of popular I-D processing instructions -->
 <rfc xmlns:xi="http://www.w3.org/2001/XInclude"
-     category="std" docName="draft-ietf-lsr-ospf-ls-link-infinity-22"
+     category="std" docName="draft-ietf-lsr-ospf-ls-link-infinity-23"
      ipr="trust200902"
      obsoletes=""
      updates="5443, 6987, 8770"
@@ -56,7 +56,7 @@ most I-Ds might want to use.
 
   <front>
     <title abbrev="Advertising Unreachable Links in OSPF">Advertising Unreachable Links in OSPF</title>
-    <seriesInfo name="Internet-Draft" value="draft-ietf-lsr-ospf-ls-link-infinity-22"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-lsr-ospf-ls-link-infinity-23"/>
     <!-- add 'role="editor"' below for the editors if appropriate -->
 
     <!-- Another author who claims to be an editor -->
@@ -162,7 +162,7 @@ most I-Ds might want to use.
       <t>
         Stub Router Advertisement <xref target="RFC6987"/> defines MaxLinkMetric (0xffff)
         to indicate a router-LSA link should not be used for transit IP
-        traffic. When an OSPF router supports the Unreachable Link support
+        traffic. When an OSPF router supports the Unreachable Link
         capability defined in this document, OSPF Stub Router links are
         advertised as MaxReachableLinkMetric (0xfffe) rather than
         MaxLinkMetric (0xffff).
@@ -371,7 +371,7 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
           have advertised this capability, then links with an advertised
           metric of LSLinkInfinity MUST be treated as unreachable. Upon
           detection of a change in the number of routers in the area not
-          supporting the Unreachable Link support capability changes to 0 or
+          supporting the Unreachable Link capability changes to 0 or
           from 0 to greater than 0, all OSPF routers in the area MUST
           recalculate their routes.
         </t>
@@ -385,7 +385,7 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
         </t>
         <t>
           When an OSPF router
-          supports the Unreachable Link support capability defined in this
+          supports the Unreachable Link capability defined in this
           document, the OSPF stub router MaxLinkMetric (0xffff) MUST be
           updated to MaxReachableLinkMetric (0xfffe).
           This document updates <xref target="RFC6987"/> and <xref target="RFC8770"/>
@@ -394,14 +394,14 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
         </t>
         <t>
           When an OSPF router supports <xref target="RFC6987"/> and the Unreachable Link
-          support capability defined in this document, it MUST also support
+          capability defined in this document, it MUST also support
           advertisement all its non-stub links with a link cost of MaxReachableLinkMetric (0xfffe).
           Since MaxLinkMetric will not be used to indicate a link is unreachable unless all OSPF
           routers in the area support this specification as specified in
           <xref target="Backward_Compatibility"/>, all routers in the area will
           also support the usage of MaxReachableLinkMetric to discourage the usage of stub router
           links for transit traffic. If there are any OSPF routers in the area that do not support
-          the Unreachable Link support capability, then all OSPF routers in the area will
+          the Unreachable Link capability, then all OSPF routers in the area will
           treat links advertised with a cost MaxLinkMetric as reachable
           (<xref target="Backward_Compatibility"/>).
         </t>
@@ -418,7 +418,7 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
           of MaxLinkMetric (0xffff) to indicate that while the OSPF adjacency is in FULL state,
           LDP has not been synchronized between the two neighbors and transit IP traffic
           is discouraged.
-          When an OSPF router supports the Unreachable Link support capability
+          When an OSPF router supports the Unreachable Link capability
           defined in this document, the usage of OSPF MaxLinkMetric (0xffff) to discourage
           usage of the link until LDP is "fully operational" MUST be updated to
           MaxReachableLinkMetric (0xfffe). It is important to keep the link in the topology to
@@ -434,7 +434,7 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
       <name>Operational Considerations</name>
       <section title="Configuration Parameters">
         <t>
-          Support of the Unreachable Link support capability SHOULD be
+          Support of the Unreachable Link capability SHOULD be
           configurable.
         </t>
         <t>
@@ -443,7 +443,7 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
           of links is automatically computed based on the inverse of the link's
           bandwidth and there is a mix of low-speed and high-speed links, the
           computation may result in the maximum metric. In this case, OSPF routers
-          supporting this specification can disable the Unreachable Link support
+          supporting this specification can disable the Unreachable Link
           capability and still treat links with maximum metric as reachable.
         </t>
         <t>
@@ -969,7 +969,7 @@ module ietf-ospf-unreachable-links {
       <name>Security Considerations</name>
       <t>
         A compromised OSPF router could advertise changes to its Unreachable Link
-        support capability rapidly resulting in repeated route recalculations
+        capability rapidly resulting in repeated route recalculations
         on routers in the area supporting this specification
         (<xref target="Backward_Compatibility"/>).
         Hence, it is RECOMMENDED that routers supporting this specification also
@@ -1032,7 +1032,7 @@ module ietf-ospf-unreachable-links {
             <tbody>
               <tr>
                 <td>TBD</td>
-                <td>Unreachable Link support</td>
+                <td>Unreachable Link</td>
                 <td>This document</td>
               </tr>
             </tbody>
