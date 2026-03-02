@@ -34,7 +34,7 @@ most I-Ds might want to use.
 <!-- keep one blank line between list items -->
 <!-- end of list of popular I-D processing instructions -->
 <rfc xmlns:xi="http://www.w3.org/2001/XInclude"
-     category="std" docName="draft-ietf-lsr-ospf-ls-link-infinity-21"
+     category="std" docName="draft-ietf-lsr-ospf-ls-link-infinity-22"
      ipr="trust200902"
      obsoletes=""
      updates="5443, 6987, 8770"
@@ -56,7 +56,7 @@ most I-Ds might want to use.
 
   <front>
     <title abbrev="Advertising Unreachable Links in OSPF">Advertising Unreachable Links in OSPF</title>
-    <seriesInfo name="Internet-Draft" value="draft-ietf-lsr-ospf-ls-link-infinity-21"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-lsr-ospf-ls-link-infinity-22"/>
     <!-- add 'role="editor"' below for the editors if appropriate -->
 
     <!-- Another author who claims to be an editor -->
@@ -985,7 +985,7 @@ module ietf-ospf-unreachable-links {
         each define a data model that is designed to be accessed via YANG-based management protocols, such as
         NETCONF <xref target="RFC6241"/> and RESTCONF <xref target="RFC8040"/>. These
         YANG-based management protocols (1) have to use a secure transport layer
-        (e.g., SSH <xref target="RFC4252"/>, TLS <xref target="RFC8446"/>, and
+        (e.g., SSH <xref target="RFC4252"/>, TLS <xref target="I-D.ietf-tls-rfc8446bis"/>, and
         QUIC <xref target="RFC9000"/>) and (2) have
         to use mutual authentication.
       </t>
@@ -1187,7 +1187,7 @@ Reference: RFC XXXX
       <?rfc include="reference.RFC.7308.xml"?>
       <?rfc include="reference.RFC.8040.xml"?>
       <?rfc include="reference.RFC.8340.xml"?>
-      <?rfc include="reference.RFC.8446.xml"?>
+      <xi:include href="https://xml2rfc.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-tls-rfc8446bis.xml"/>
       <?rfc include="reference.RFC.9000.xml"?>
     </references>
   </references>
