@@ -34,7 +34,7 @@ most I-Ds might want to use.
 <!-- keep one blank line between list items -->
 <!-- end of list of popular I-D processing instructions -->
 <rfc xmlns:xi="http://www.w3.org/2001/XInclude"
-     category="std" docName="draft-ietf-lsr-ospf-ls-link-infinity-23"
+     category="std" docName="draft-ietf-lsr-ospf-ls-link-infinity-24"
      ipr="trust200902"
      obsoletes=""
      updates="5443, 6987, 8770"
@@ -56,7 +56,7 @@ most I-Ds might want to use.
 
   <front>
     <title abbrev="Advertising Unreachable Links in OSPF">Advertising Unreachable Links in OSPF</title>
-    <seriesInfo name="Internet-Draft" value="draft-ietf-lsr-ospf-ls-link-infinity-23"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-lsr-ospf-ls-link-infinity-24"/>
     <!-- add 'role="editor"' below for the editors if appropriate -->
 
     <!-- Another author who claims to be an editor -->
@@ -274,7 +274,7 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
       </section>
     </section>
     <section anchor="Solution_based_on_LSLinkInfinity">
-      <name>LSLinkInfinity Based Solution</name>
+      <name>LSLinkInfinity-Based Solution</name>
     <section anchor="Unreachable_link">
       <name>Unreachable Link Advertisement</name>
       <t>
@@ -369,9 +369,9 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
           i.e., all routers with Router-LSAs in the area Link State Database (LSDB),
           have advertised this capability. If all OSPF Routers in the area
           have advertised this capability, then links with an advertised
-          metric of LSLinkInfinity MUST be treated as unreachable. Upon
-          detection of a change in the number of routers in the area not
-          supporting the Unreachable Link capability changes to 0 or
+          metric of LSLinkInfinity MUST be treated as unreachable. When
+          the number of routers in the area not supporting the
+          Unreachable Link capability changes to 0 or
           from 0 to greater than 0, all OSPF routers in the area MUST
           recalculate their routes.
         </t>
@@ -407,7 +407,7 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
         </t>
         <t>
           An OSPFv3 router can simply advertise R-bit in its router-LSA options <xref target="RFC5340"/>
-          to prevent usage stub router links for transit traffic.  Similarly, OSPFv2 routers supporting
+          to prevent the usage stub router links for transit traffic.  Similarly, OSPFv2 routers supporting
           <xref target="RFC8770"/> can advertise the H-bit in the router-LSA options.
         </t>
       </section>
@@ -552,8 +552,7 @@ module: ietf-ospf-unreachable-links
             "OSPF Router Functional Capability Bits" registry
             <xref target="IANA-OSPF-FC-Bits" format="default" sectionFormat="of"
                   derivedContent="IANA-OSPF-FC-Bits"/>.
-            The latest version of this YANG module is available at
-            https://www.iana.org/assignments/iana-ospf-functional-cap-bits/iana-ospf-functional-cap-bits.xhtml.
+            The latest version of this YANG module is available at TBD.
           </t>
           <t>
             Note to the RFC Editor: Please remove this module in the version to be
@@ -976,7 +975,7 @@ module ietf-ospf-unreachable-links {
         support the SPF back-off delay algorithm described in <xref target="RFC8405"/>.
       </t>
       <t>
-        The security considerations for <xref target="RFC2328"/>,<xref target="RFC5340"/>,
+        The security considerations for <xref target="RFC2328"/>, <xref target="RFC5340"/>,
         <xref target="RFC6987"/>, and <xref target="RFC7770"/> are also applicable to this
         protocol extension.
       </t>
@@ -986,8 +985,7 @@ module ietf-ospf-unreachable-links {
         NETCONF <xref target="RFC6241"/> and RESTCONF <xref target="RFC8040"/>. These
         YANG-based management protocols (1) have to use a secure transport layer
         (e.g., SSH <xref target="RFC4252"/>, TLS <xref target="I-D.ietf-tls-rfc8446bis"/>, and
-        QUIC <xref target="RFC9000"/>) and (2) have
-        to use mutual authentication.
+        QUIC <xref target="RFC9000"/>) and (2) have to use mutual authentication.
       </t>
       <t>
         The NETCONF Access Control Model (NACM) <xref target="RFC8341"/> provides the
@@ -1019,7 +1017,8 @@ module ietf-ospf-unreachable-links {
         <section title="Registering OSPF Router Functional Capability Bits">
           <t>
             This document defines a new bit in the registry "OSPF Router
-            Functional Capability Bits":
+            Functional Capability Bits"
+            (https://www.iana.org/assignments/ospf-parameters/ospf-parameters.xhtml#router-functional-capability):
           </t>
           <table align="center">
             <thead>
@@ -1136,6 +1135,7 @@ Reference: RFC XXXX
   <t>Thanks to Dhruv Dhody for OPS Directorate review and comments.</t>
   <t>Thanks to Gunter van de Velde for review and comments.</t>
   <t>Thanks to Mohamed Boucadair for review and comments.</t>
+  <t>Thanks to Mike Bishop for review and comments.</t>
 </section>
 </middle>
 <!--  *****BACK MATTER ***** -->
