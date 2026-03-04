@@ -249,7 +249,7 @@ most I-Ds might want to use.
 
 Figure 3: Topology of Flex-Algorithm 128]]></artwork>
         <t>
-          The "Red" links that are used by Flex-Algorithm
+          The "Red" links are used by Flex-Algorithm
           128 calculation.  However, these
           "Red" links are also included in the default algorithm
           calculation <xref target="RFC9350"/> since they are reachable.
@@ -259,7 +259,7 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
         <t>
           If the OSPF metrics for all the "Red" links are advertised as
           unreachable, they will be excluded from the default SPF calculation
-          as shown in Figure 4, This allows the "Red" links from A to B and C to D
+          as shown in Figure 4. This allows the "Red" links from A to B and C to D
           to be used exclusively by the Flex-Algorithm 128 calculation.
         </t>
         <artwork align="center" name="Base SPF Topology Excluding Unreachable Links"><![CDATA[
@@ -394,7 +394,7 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
         </t>
         <t>
           When an OSPF router supports <xref target="RFC6987"/> and the Unreachable Link
-          capability defined in this document, it MUST also support
+          capability defined in this document, it MUST support
           advertisement all its non-stub links with a link cost of MaxReachableLinkMetric (0xfffe).
           Since MaxLinkMetric will not be used to indicate a link is unreachable unless all OSPF
           routers in the area support this specification as specified in
@@ -994,8 +994,13 @@ module ietf-ospf-unreachable-links {
         operations and content.
       </t>
       <t>
-        The following data nodes defined in the ietf-ospf-unreachable-links YANG module that are
-        writable/creatable/deletable (i.e., config true, which is the default).
+        There are a number of data nodes defined in the ietf-ospf-unreachable-links
+        YANG module that are  writable/creatable/deletable (i.e., "config true",
+        which is the default).  All writable data nodes are likely to be sensitive or
+        vulnerable in some network environments.  Write
+        operations (e.g., edit-config) and delete operations to these data
+        nodes without proper protection or authentication can have a negative
+        effect on network operations.
         The modification of these data nodes without proper protection can
         prevent interpretation of the OSPF LSLinkInfinity metric as unreachable.
       </t>
@@ -1135,7 +1140,7 @@ Reference: RFC XXXX
   <t>Thanks to Dhruv Dhody for OPS Directorate review and comments.</t>
   <t>Thanks to Gunter van de Velde for review and comments.</t>
   <t>Thanks to Mohamed Boucadair for review and comments.</t>
-  <t>Thanks to Mike Bishop for review and comments.</t>
+  <t>Thanks to Mike Bishop and Mahesh Jethanadani for review and comments.</t>
 </section>
 </middle>
 <!--  *****BACK MATTER ***** -->
