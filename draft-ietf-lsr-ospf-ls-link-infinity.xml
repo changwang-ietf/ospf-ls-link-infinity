@@ -304,12 +304,6 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
         </li>
         <li>
           <t>
-            The OSPFv2 Extended Link TLV of OSPFv2 Extended Link Opaque LSA
-            <xref target="RFC7684"/>
-          </t>
-        </li>
-        <li>
-          <t>
             The Router-Link TLV of OSPFv3 E-Router-LSA <xref target="RFC8362"/>
           </t>
         </li>
@@ -343,11 +337,12 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
  Figure 5: Inconsistent LSLinkInfinity Interpretation Causing Loops]]>
         </artwork>
         <t>
-          To provide backward compatibility, this document defines that
-          routers supporting LSLinkInfinity for unreachable links MUST
-          advertise a Router Information (RI) LSA with a Router
+          To provide backward compatibility, this document specifies that
+          routers supporting LSLinkInfinity for unreachable links
+          support advertisement of a Router Information (RI) LSA with a Router
           Functional Capabilities TLV <xref target="RFC7770"/> including the following
-          Router Functional Capability Bit:
+          Router Functional Capability Bit. The value of the bit is controled by
+          configuration as specified in <xref target="Config"/>.
         </t>
         <table align="center">
           <thead>
@@ -367,13 +362,25 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
           OSPF Routers MUST NOT treat links with an advertised metric of
           LSLinkInfinity as unreachable unless all routers in the OSPF area,
           i.e., all routers with Router-LSAs in the area Link State Database (LSDB),
-          have advertised this capability. If all OSPF Routers in the area
-          have advertised this capability, then links with an advertised
-          metric of LSLinkInfinity MUST be treated as unreachable. When
-          the number of routers in the area not supporting the
-          Unreachable Link capability changes to 0 or
+          have advertised this capability in an OSPFv2 Router Information Opaque LSA
+          or an OSPFv3 Router Information LSA.
+          If all OSPF Routers in the area have advertised this capability,
+          then links with an advertised metric of LSLinkInfinity MUST
+          be treated as unreachable. When the number of routers in the area
+          not supporting the Unreachable Link Capability changes to 0 or
           from 0 to greater than 0, all OSPF routers in the area MUST
           recalculate their routes.
+        </t>
+        <t>
+          In normal operation, it is possible that the OSPF RI LSA will fail to reach all routers
+          in an area in a timely manner. For example, if a new router not supporting the
+          the Unreachable Link Capability joins an area that previously only had OSPF routers
+          advertising support of the Unreachable Link Capability, then it may take some time for
+          the OSPF RI LSA to propagate to all routers. While it is propagating, the routers in the
+          area will gradually detect the presence of a router that does not support the capability
+          and will revert to treating links with MaxLinkMetric as being reachable.
+          During the propagation time, this inconsistency of MaxLinkMetric interpretation between
+          OSPF routers can result in transient routing loops.
         </t>
       </section>
       <section anchor="Stub_Router_Advertisement_Backward_Compatibility">
@@ -432,10 +439,11 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
     </section>
     <section anchor="Operational_Considerations">
       <name>Operational Considerations</name>
-      <section title="Configuration Parameters">
+      <section anchor="Config" title="Configuration Parameters">
         <t>
-          Support of the Unreachable Link capability SHOULD be
-          configurable.
+          Support of the Unreachable Link capability MUST be
+          configurable. The default MUST be to not advertise the
+          capability, i.e., the OSPF RI functional capability is false.
         </t>
         <t>
           In some networks, the operator may still want links with maximum
@@ -528,11 +536,16 @@ module: ietf-ospf-functional-capability
           <t>The following shows the tree diagram of the module for OSPF Advertising Unreachable Links:</t>
           <artwork align="left" name="" type="" alt=""><![CDATA[
 module: ietf-ospf-unreachable-links
+
   augment /rt:routing/rt:control-plane-protocols
-            /rt:control-plane-protocol/ospf:ospf:
+            /rt:control-plane-protocol/ospf:ospf/ospf:areas
+            /ospf:area:
     +--rw unreachable-link-advertisement
        +--rw enabled?   boolean
-
+  augment /rt:routing/rt:control-plane-protocols
+            /rt:control-plane-protocol/ospf:ospf/ospf:areas
+            /ospf:area/ospf:interfaces/ospf:interface:
+    +--rw advertise-unreachable-link?   boolean
           ]]></artwork>
         </section>
         <section title="IANA Module for OSPF Functional Capability Bits">
@@ -557,7 +570,7 @@ module: ietf-ospf-unreachable-links
           <t>
             Note to the RFC Editor: Please remove this module in the version to be
             published as RFC.
-          </t>  
+          </t>
           <t>
             This document defines the initial version of the IANA-maintained YANG
             module for OSPF Router Functional Capabilities that mirrors
@@ -870,7 +883,7 @@ module ietf-ospf-functional-capability {
         </section>
         <section title="YANG Module for OSPF Advertising Unreachable Links">
           <t>The following is the YANG module for OSPF Advertising Unreachable Links:</t>
-          <sourcecode name="ietf-ospf-unreachable-links@2026-01-28.yang" type="" markers="true"><![CDATA[
+          <sourcecode name="ietf-ospf-unreachable-links@2026-03-10.yang" type="" markers="true"><![CDATA[
 module ietf-ospf-unreachable-links {
   yang-version 1.1;
   namespace "urn:ietf:params:xml:ns:yang:"
@@ -929,17 +942,18 @@ module ietf-ospf-unreachable-links {
      This version of this YANG module is part of RFC XXXX; see
      the RFC itself for full legal notices.";
 
-  revision 2026-01-28 {
+  revision 2026-03-10 {
     description
       "Initial version";
     reference
       "RFC XXXX: Advertising Unreachable Links in OSPF";
   }
 
-  augment "/rt:routing/rt:control-plane-protocols"
-        + "/rt:control-plane-protocol/ospf:ospf" {
-    when "derived-from-or-self(../rt:type, 'ospf:ospfv2') or "
-       + "derived-from-or-self(../rt:type, 'ospf:ospfv3')" {
+  augment "/rt:routing/rt:control-plane-protocols/"
+        + "rt:control-plane-protocol/ospf:ospf/"
+        + "ospf:areas/ospf:area" {
+    when "derived-from-or-self(../../../rt:type, 'ospf:ospfv2') or "
+       + "derived-from-or-self(../../../rt:type, 'ospf:ospfv3')" {
       description
         "This augments the OSPF routing protocol when used.";
     }
@@ -951,13 +965,51 @@ module ietf-ospf-unreachable-links {
         type boolean;
         default "false";
         description
-          "Controls advertisement of unreachable links.
-           It is enabled when set to true and disabled
-           when set to false.";
+          "Controls the interpretation of MaxLinkMetrc as
+           unreachable and the advertisement of the unreachable
+           link capability for the area. It is enabled when set
+           to true and disabled when set to false.";
       }
       description
         "OSPF unreachable link advertisement parameters.";
     }
+  }
+
+  augment "/rt:routing/rt:control-plane-protocols/"
+        + "rt:control-plane-protocol/ospf:ospf/"
+        + "ospf:areas/ospf:area/ospf:interfaces/ospf:interface" {
+    when "derived-from(/rt:routing/rt:control-plane-protocols/"
+       + "rt:control-plane-protocol/rt:type, 'ospf:ospfv2') or "
+       + "derived-from(/rt:routing/rt:control-plane-protocols/"
+       + "rt:control-plane-protocol/rt:type, 'ospf:ospfv3')" {
+      description
+        "This augments the OSPF interfaces.";
+    }
+    leaf advertise-unreachable-link {
+      type boolean;
+      must "not(../advertise-unreachable-link = 'true' and "
+         + "/rt:routing/rt:control-plane-protocols/"
+         + "rt:control-plane-protocol/ospf:ospf/ospf:areas/"
+         + "ospf:area/"
+         + "ospf-unreach-link:unreachable-link-advertisement/"
+         + "ospf-unreach-link:enabled = 'false')" {
+        error-message "The interface cannot be advertised "
+                    + "as unreachable (true) unless the "
+                    + "unreachable-link-advertisement capability is "
+                    + "enabled (true).";
+        description
+          "Ensures an interface isn't explicitly advertised as
+           unreachable unless the OSPF instance level capability is
+           enabled.";
+      }
+      default "false";
+      description
+        "Specifies that the link should be advertise with a metric
+         of MaxLinkMetric (0xFFFF) in the default topology.";
+    }
+    description
+      "Augment OSPF interfaces with anoption to advertise the link
+       as unreachable.";
   }
 }
           ]]></sourcecode>
@@ -1002,19 +1054,22 @@ module ietf-ospf-unreachable-links {
         nodes without proper protection or authentication can have a negative
         effect on network operations.
         The modification of these data nodes without proper protection can
-        prevent interpretation of the OSPF LSLinkInfinity metric as unreachable.
+        prevent interpretation of the OSPF LSLinkInfinity metric as unreachable
+        or result in a link being advertised as unreachable.
       </t>
       <ul empty="true" spacing="normal">
-        <li>/ospf:ospf/ospf-unreach-link:unreachable-link-advertisement/ospf-unreach-link:enabled</li>
+        <li>/ospf:ospf/ospf:areas/ospf:area/ospf-unreach-link:unreachable-link-advertisement/ospf-unreach-link:enabled</li>
+        <li>/ospf:ospf/ospf:areas/ospf:area/ospf:interfaces/ospf:interface/ospf-unreach-link:advertise-unreachable-link</li>
       </ul>
       <t>
         Some of the readable data nodes in the ietf-ospf-unreachable-links YANG module may be considered
         sensitive or vulnerable in some network environments. Exposure of the
-        OSPF link state database may be useful in mounting a Denial-of-Service (DoS)
+        OSPF unreachable link configuration may be useful in mounting a Denial-of-Service (DoS)
         attacks. These are the readable data nodes:
       </t>
       <ul empty="true" spacing="normal">
-        <li>/ospf:ospf/ospf-unreach-link:unreachable-link-advertisement/ospf-unreach-link:enabled</li>
+        <li>/ospf:ospf/ospf:areas/ospf:area/ospf-unreach-link:unreachable-link-advertisement/ospf-unreach-link:enabled</li>
+        <li>/ospf:ospf/ospf:areas/ospf:area/ospf:interfaces/ospf:interface/ospf-unreach-link:advertise-unreachable-link</li>
       </ul>
     </section>
     <section anchor="IANA">
@@ -1102,7 +1157,7 @@ Reference: RFC XXXX
 
   "description":   Contains the non-abbreviated OSPF capability bit
                    name from the registry.
-  
+
   "reference":     Replicates the reference(s) from the registry with
                    the title of the document(s) added.
             </artwork>
@@ -1140,7 +1195,7 @@ Reference: RFC XXXX
   <t>Thanks to Dhruv Dhody for OPS Directorate review and comments.</t>
   <t>Thanks to Gunter van de Velde for review and comments.</t>
   <t>Thanks to Mohamed Boucadair for review and comments.</t>
-  <t>Thanks to Mike Bishop and Mahesh Jethanadani for review and comments.</t>
+  <t>Thanks to Mike Bishop, Mahesh Jethanadani, and Ketan Taulaulikar for review and comments.</t>
 </section>
 </middle>
 <!--  *****BACK MATTER ***** -->
@@ -1173,7 +1228,6 @@ Reference: RFC XXXX
       <?rfc include="reference.RFC.5443.xml"?>
       <?rfc include="reference.RFC.6020.xml"?>
       <?rfc include="reference.RFC.6987.xml"?>
-      <?rfc include="reference.RFC.7684.xml"?>
       <?rfc include="reference.RFC.7770.xml"?>
       <?rfc include="reference.RFC.7950.xml"?>
       <?rfc include="reference.RFC.8174.xml"?>

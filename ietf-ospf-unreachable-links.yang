@@ -56,17 +56,18 @@ module ietf-ospf-unreachable-links {
      This version of this YANG module is part of RFC XXXX; see
      the RFC itself for full legal notices.";
 
-  revision 2026-01-28 {
+  revision 2026-03-10 {
     description
       "Initial version";
     reference
       "RFC XXXX: Advertising Unreachable Links in OSPF";
   }
 
-  augment "/rt:routing/rt:control-plane-protocols"
-        + "/rt:control-plane-protocol/ospf:ospf" {
-    when "derived-from-or-self(../rt:type, 'ospf:ospfv2') or "
-       + "derived-from-or-self(../rt:type, 'ospf:ospfv3')" {
+  augment "/rt:routing/rt:control-plane-protocols/"
+        + "rt:control-plane-protocol/ospf:ospf/"
+        + "ospf:areas/ospf:area" {
+    when "derived-from-or-self(../../../rt:type, 'ospf:ospfv2') or "
+       + "derived-from-or-self(../../../rt:type, 'ospf:ospfv3')" {
       description
         "This augments the OSPF routing protocol when used.";
     }
@@ -78,12 +79,50 @@ module ietf-ospf-unreachable-links {
         type boolean;
         default "false";
         description
-          "Controls advertisement of unreachable links.
-           It is enabled when set to true and disabled
-           when set to false.";
+          "Controls the interpretation of MaxLinkMetrc as
+           unreachable and the advertisement of the unreachable
+           link capability for the area. It is enabled when set
+           to true and disabled when set to false.";
       }
       description
         "OSPF unreachable link advertisement parameters.";
     }
+  }
+
+  augment "/rt:routing/rt:control-plane-protocols/"
+        + "rt:control-plane-protocol/ospf:ospf/"
+        + "ospf:areas/ospf:area/ospf:interfaces/ospf:interface" {
+    when "derived-from(/rt:routing/rt:control-plane-protocols/"
+       + "rt:control-plane-protocol/rt:type, 'ospf:ospfv2') or "
+       + "derived-from(/rt:routing/rt:control-plane-protocols/"
+       + "rt:control-plane-protocol/rt:type, 'ospf:ospfv3')" {
+      description
+        "This augments the OSPF interfaces.";
+    }
+    leaf advertise-unreachable-link {
+      type boolean;
+      must "not(../advertise-unreachable-link = 'true' and "
+         + "/rt:routing/rt:control-plane-protocols/"
+         + "rt:control-plane-protocol/ospf:ospf/ospf:areas/"
+         + "ospf:area/"
+         + "ospf-unreach-link:unreachable-link-advertisement/"
+         + "ospf-unreach-link:enabled = 'false')" {
+        error-message "The interface cannot be advertised "
+                    + "as unreachable (true) unless the "
+                    + "unreachable-link-advertisement capability is "
+                    + "enabled (true).";
+        description
+          "Ensures an interface isn't explicitly advertised as
+           unreachable unless the OSPF instance level capability is
+           enabled.";
+      }
+      default "false";
+      description
+        "Specifies that the link should be advertise with a metric
+         of MaxLinkMetric (0xFFFF) in the default topology.";
+    }
+    description
+      "Augment OSPF interfaces with anoption to advertise the link
+       as unreachable.";
   }
 }
