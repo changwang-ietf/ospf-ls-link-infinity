@@ -34,7 +34,7 @@ most I-Ds might want to use.
 <!-- keep one blank line between list items -->
 <!-- end of list of popular I-D processing instructions -->
 <rfc xmlns:xi="http://www.w3.org/2001/XInclude"
-     category="std" docName="draft-ietf-lsr-ospf-ls-link-infinity-24"
+     category="std" docName="draft-ietf-lsr-ospf-ls-link-infinity-25"
      ipr="trust200902"
      obsoletes=""
      updates="5443, 6987, 8770"
@@ -56,7 +56,7 @@ most I-Ds might want to use.
 
   <front>
     <title abbrev="Advertising Unreachable Links in OSPF">Advertising Unreachable Links in OSPF</title>
-    <seriesInfo name="Internet-Draft" value="draft-ietf-lsr-ospf-ls-link-infinity-24"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-lsr-ospf-ls-link-infinity-2"/>
     <!-- add 'role="editor"' below for the editors if appropriate -->
 
     <!-- Another author who claims to be an editor -->
@@ -339,9 +339,9 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
         <t>
           To provide backward compatibility, this document specifies that
           routers supporting LSLinkInfinity for unreachable links
-          support advertisement of a Router Information (RI) LSA with a Router
+          support advertisement of an area-scoped Router Information (RI) LSA with a Router
           Functional Capabilities TLV <xref target="RFC7770"/> including the following
-          Router Functional Capability Bit. The value of the bit is controled by
+          Router Functional Capability Bit. The value of the bit is controlled by
           configuration as specified in <xref target="Config"/>.
         </t>
         <table align="center">
@@ -372,8 +372,8 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
           recalculate their routes.
         </t>
         <t>
-          In normal operation, it is possible that the OSPF RI LSA will fail to reach all routers
-          in an area in a timely manner. For example, if a new router not supporting the
+          In normal operation, it is possible that an area-scoped OSPF RI LSA will fail to reach
+          all routers in an area in a timely manner. For example, if a new router not supporting the
           the Unreachable Link Capability joins an area that previously only had OSPF routers
           advertising support of the Unreachable Link Capability, then it may take some time for
           the OSPF RI LSA to propagate to all routers. While it is propagating, the routers in the
@@ -443,7 +443,8 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
         <t>
           Support of the Unreachable Link capability MUST be
           configurable. The default MUST be to not advertise the
-          capability, i.e., the OSPF RI functional capability is false.
+          capability, i.e., the functional capability in the area-scoped
+          OSPF Router Information LSA is false.
         </t>
         <t>
           In some networks, the operator may still want links with maximum
