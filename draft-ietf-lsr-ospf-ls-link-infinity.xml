@@ -56,7 +56,7 @@ most I-Ds might want to use.
 
   <front>
     <title abbrev="Advertising Unreachable Links in OSPF">Advertising Unreachable Links in OSPF</title>
-    <seriesInfo name="Internet-Draft" value="draft-ietf-lsr-ospf-ls-link-infinity-2"/>
+    <seriesInfo name="Internet-Draft" value="draft-ietf-lsr-ospf-ls-link-infinity-25"/>
     <!-- add 'role="editor"' below for the editors if appropriate -->
 
     <!-- Another author who claims to be an editor -->
@@ -128,13 +128,16 @@ most I-Ds might want to use.
         used in the default SPF computation even if this is not intended.
         In order to advertise these links and not use them in the base SPF
         calculation, the metric LSLinkInfinity (0xffff) is used to specify
-        that the link is unreachable.
+        that the link is unreachable. If all OSPF routers in an OSPF area support
+        this functionality and have advertised the capability via an area-scoped
+        OSPF Router-Information LSA, then links advertised with a metric of
+        LSLinkInfinity are considered unreachable.
       </t>
       <t>
         MaxReachableLinkMetric (0xfffe) is defined to provide backward compatible
         reachability in specifications that previously specified advertisement
         of MaxLinkMetric (0xffff).
-        This document updates RFC 5443, RFC 6987, and RFC 8770
+        This document updates RFC 5443, RFC 6987, RFC 8379, and RFC 8770
         with respect to the advertisement of MaxReachableLinkMetric (0xfffe)
         rather than MaxLinkMetric (0xffff).
       </t>
@@ -157,12 +160,12 @@ most I-Ds might want to use.
         LSLinkInfinity (0xffff) is used to specify
         that the link is unreachable and OSPF routers supporting this
         specification will exclude the link from SPF calculations (subject to
-        backward-compatibility constraints, refer to <xref target="Backward_Compatibility"/>).
+        backward-compatibility, refer to <xref target="Backward_Compatibility"/>).
       </t>
       <t>
         Stub Router Advertisement <xref target="RFC6987"/> defines MaxLinkMetric (0xffff)
-        to indicate a router-LSA link should not be used for transit IP
-        traffic. When an OSPF router supports the Unreachable Link
+        to indicate a router-LSA link should only be used for transit IP
+        traffic as a last resort. When an OSPF router supports the Unreachable Link
         capability defined in this document, OSPF Stub Router links are
         advertised as MaxReachableLinkMetric (0xfffe) rather than
         MaxLinkMetric (0xffff).
@@ -176,6 +179,13 @@ most I-Ds might want to use.
         synchronized between the two neighbors and transit traffic is discouraged. This document
         updates <xref target="RFC5443"/>  with respect to the advertisement of MaxReachableLinkMetric
         rather than MaxLinkMetric.
+      </t>
+      <t>
+        Finally, OSPF Graceful Link Shutdown <xref target="RFC8379"/> specifies OSPF
+        advertisement of MaxLinkMetric (0xffff) to indicate that the OSPF link will be taken out
+        of service and usage transit traffic is discouraged. This document
+        updates <xref target="RFC8379"/>  with respect to the advertisement of
+        MaxReachableLinkMetric rather than MaxLinkMetric.
       </t>
       <section anchor="Requirements_Language">
         <name>Requirements Language</name>
@@ -289,8 +299,9 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
         topology as other topologies are optional <xref target="RFC4915"/>,
         OSPF routers supporting this specification MUST consistently interpret
         LSLinkInfinity as unreachable during the associated SPF computation.
-        This applies to both the Flex-Algorithm SPF <xref target="RFC9350"/>
-        and the base SPF as long as LSLinkInfinity is specified for the OSPF metric.
+        Interpretation of LSLinkInfinity as unreachable is also applicable to
+        Flex-Algorithm SPF computations <xref target="RFC9350"/> which use
+        the OSPF link metric.
       </t>
       <t>
         An OSPF metric with LSLinkInfinity indicating a link is unreachable is
@@ -412,11 +423,6 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
           treat links advertised with a cost MaxLinkMetric as reachable
           (<xref target="Backward_Compatibility"/>).
         </t>
-        <t>
-          An OSPFv3 router can simply advertise R-bit in its router-LSA options <xref target="RFC5340"/>
-          to prevent the usage stub router links for transit traffic.  Similarly, OSPFv2 routers supporting
-          <xref target="RFC8770"/> can advertise the H-bit in the router-LSA options.
-        </t>
       </section>
       <section anchor="LDP_IGP_SYNC_Backward_Compatibility">
         <name>Label Distribution Protocol (LDP) IGP Synchronization Backward Compatibility</name>
@@ -436,6 +442,22 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
           MaxLinkMetric.
         </t>
       </section>
+      <section anchor="OSPF_Graceful_Link_Shutdown_Backward_Compatibility">
+        <name>OSPF Graceful Link Shutdown Backward Compatibility</name>
+        <t>
+          OSPF Graceful Link <xref target="RFC8379"/> specifies OSPF advertisement
+          of MaxLinkMetric (0xffff) to indicate that the link is going to be taken down
+          and transit traffic is discouraged.
+          When an OSPF router supports the Unreachable Link capability
+          defined in this document, the usage of OSPF MaxLinkMetric (0xffff) to discourage
+          usage of a link prior to it being taken out of service MUST be updated to
+          MaxReachableLinkMetric (0xfffe). It is important to keep the link in the topology to
+          allow IP traffic to use the link as a last resort prior to planned shutdown.
+          This document updates <xref target="RFC8379"/>
+          with respect to the advertisement of MaxReachableLinkMetric rather than
+          MaxLinkMetric.
+        </t>
+      </section>
     </section>
     <section anchor="Operational_Considerations">
       <name>Operational Considerations</name>
@@ -451,14 +473,9 @@ Figure 3: Topology of Flex-Algorithm 128]]></artwork>
           metric (0xffff) to be treated as reachable. For example, when the cost
           of links is automatically computed based on the inverse of the link's
           bandwidth and there is a mix of low-speed and high-speed links, the
-          computation may result in the maximum metric. In this case, OSPF routers
-          supporting this specification can disable the Unreachable Link
-          capability and still treat links with maximum metric as reachable.
-        </t>
-        <t>
-          It is also RECOMMENDED that implementations supporting this document
-          and auto-costing limit the maximum computed cost to
-          MaxReachableLinkMetric (0xfffe). An example of auto-costing would be
+          computation may result in the maximum metric. Hence, implementations
+          supporting this document and auto-costing MUST limit the maximum computed
+          cost to MaxReachableLinkMetric (0xfffe). An example of auto-costing would be
           to automatically set the link metric to be inversely proportional
           to the link bandwidth (refer to the auto-cost feature in the
           ietf-ospf.yang <xref target="RFC9129"/>).
@@ -1226,6 +1243,7 @@ Reference: RFC XXXX
       <?rfc include="reference.RFC.2328.xml"?>
       <?rfc include="reference.RFC.3688.xml"?>
       <?rfc include="reference.RFC.4915.xml"?>
+      <?rfc include="reference.RFC.5340.xml"?>
       <?rfc include="reference.RFC.5443.xml"?>
       <?rfc include="reference.RFC.6020.xml"?>
       <?rfc include="reference.RFC.6987.xml"?>
@@ -1234,6 +1252,7 @@ Reference: RFC XXXX
       <?rfc include="reference.RFC.8174.xml"?>
       <?rfc include="reference.RFC.8341.xml"?>
       <?rfc include="reference.RFC.8349.xml"?>
+      <?rfc include="reference.RFC.8379.xml"?>
       <?rfc include="reference.RFC.8405.xml"?>
       <?rfc include="reference.RFC.8362.xml"?>
       <?rfc include="reference.RFC.8770.xml"?>
@@ -1242,7 +1261,6 @@ Reference: RFC XXXX
     </references>
     <references title="Informative References">
       <?rfc include="reference.RFC.4252.xml"?>
-      <?rfc include="reference.RFC.5340.xml"?>
       <?rfc include="reference.RFC.6241.xml"?>
       <?rfc include="reference.RFC.7308.xml"?>
       <?rfc include="reference.RFC.8040.xml"?>
